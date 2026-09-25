@@ -5,11 +5,17 @@ Ortak üst menü / alt bilgi ve ürün listesi tek yerde tutulur; HTML sayfalar�
 Kullanım:  python3 tools/build.py
 Firma bilgilerini (telefon, adres, e-posta, alan adı) aşağıdaki FIRMA sözlüğünden değiştirin.
 """
+import hashlib
 import json
 from pathlib import Path
 from html import escape
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def surum(yol):
+    """Dosya içeriğinden kısa sürüm kodu: dosya değişince tarayıcı eski kopyayı kullanmaz."""
+    return hashlib.sha1((ROOT / yol).read_bytes()).hexdigest()[:8]
 
 # ---------------------------------------------------------------------------
 # FİRMA BİLGİLERİ — [DOLDURULACAK] olan alanları gerçek bilgilerle değiştirin
@@ -316,7 +322,7 @@ def head(title, desc, path, extra_ld=None):
 <meta property="og:image" content="{FIRMA['domain']}/assets/img/logo-oguz-klima.png">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 {FONT_LINK}
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css?v={surum('assets/css/style.css')}">
 {ld_html}
 </head>
 <body>
@@ -419,7 +425,7 @@ def footer(dialog=False):
 </footer>
 
 <a class="wa" href="https://wa.me/{FIRMA['whatsapp']}" target="_blank" rel="noopener" aria-label="WhatsApp ile yazın">{ICON['wa']}</a>
-<script src="assets/js/main.js" defer></script>
+<script src="assets/js/main.js?v={surum('assets/js/main.js')}" defer></script>
 </body>
 </html>
 """
