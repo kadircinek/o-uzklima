@@ -18,7 +18,7 @@
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "LocalBusiness", "@id": "https://www.oguzklima.com.tr/#firma", "name": "Oğuz Klima Havalandırma İnşaat San. ve Tic. Ltd. Şti.", "alternateName": "Oğuz Klima", "url": "https://www.oguzklima.com.tr", "logo": "https://www.oguzklima.com.tr/assets/img/logo-oguz-klima.png", "image": "https://www.oguzklima.com.tr/assets/img/logo-oguz-klima.png", "telephone": "+90 XXX XXX XX XX", "email": "info@oguzklima.com.tr", "address": {"@type": "PostalAddress", "streetAddress": "Adres bilgisi eklenecek", "addressLocality": "İstanbul", "addressCountry": "TR"}, "areaServed": "TR", "description": "Menfez, difüzör, damper, panjur, müdahale kapağı ve susturucu üretimi."}</script>
 </head>
@@ -36,8 +36,7 @@
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="index.html" aria-label="Oğuz Klima ana sayfa">
-      <img class="logo-light" src="assets/img/logo-mark.svg" alt="Oğuz Klima logosu" width="92" height="50">
-      <img class="logo-dark" src="assets/img/logo-mark-beyaz.svg" alt="" width="92" height="50">
+      <img src="assets/img/logo-mark.svg" alt="Oğuz Klima logosu" width="96" height="52">
     </a>
     <button class="nav-toggle" aria-controls="nav" aria-expanded="false" aria-label="Menüyü aç">
       <span></span><span></span><span></span>
@@ -45,6 +44,7 @@
     <nav class="nav" id="nav" aria-label="Ana menü">
       <a href="index.html">Ana Sayfa</a>
       <a href="urunler.html">Ürünler</a>
+      <a href="projeler.html">Projeler</a>
       <a href="hakkimizda.html" aria-current="page">Hakkımızda</a>
       <a href="iletisim.html">İletişim</a>
       <a class="btn" href="iletisim.html#teklif">Teklif Al</a>
@@ -54,34 +54,36 @@
 <main id="icerik">
 <section class="page-hero">
   <div class="wrap">
-    <nav class="crumbs" aria-label="Sayfa yolu"><a href="index.html">Ana Sayfa</a> / Hakkımızda</nav>
-    <h1>Hakkımızda</h1>
-    <p>Havalandırma sistemlerinin görünen yüzü olan menfez ve difüzörlerden, kanal içindeki damper ve susturuculara kadar üretim yapıyoruz.</p>
+    <div>
+      <nav class="crumbs" aria-label="Sayfa yolu"><a href="index.html">Ana Sayfa</a> / Hakkımızda</nav>
+      <h1>Hakkımızda</h1>
+      <p>Havalandırma sistemlerinin görünen yüzü olan menfez ve difüzörlerden, kanal içindeki damper ve susturuculara kadar üretim yapıyoruz.</p>
+    </div>
+    <div class="ph-art bob" data-scene="factory" style="border-radius:20px;overflow:hidden"></div>
   </div>
 </section>
-
 <section>
   <div class="wrap about-grid">
     <div class="prose">
       <span class="eyebrow">Biz kimiz</span>
-      <h2 style="font-size:clamp(28px,3.4vw,42px);font-weight:800">Proje ekiplerinin güvendiği havalandırma ekipmanı tedarikçisi</h2>
+      <h2 style="font-size:clamp(28px,3.4vw,42px);font-weight:800;color:var(--navy)">Proje ekiplerinin güvendiği havalandırma ekipmanı tedarikçisi</h2>
       <p>Oğuz Klima Havalandırma İnşaat San. ve Tic. Ltd. Şti., havalandırma ve iklimlendirme sistemleri için hava dağıtım ve kontrol ekipmanları üretir.
         Menfez, difüzör, damper, panjur, müdahale kapağı ve susturucu ürün gruplarımızla mekanik taahhüt firmalarına,
         proje ofislerine ve yatırımcılara hizmet veriyoruz.</p>
       <p>Her projenin ölçüsü, debisi ve mimari beklentisi farklıdır. Bu nedenle ürünlerimizi standart katalog ölçülerinin
         yanında projeye özel olarak da üretiyor, doğru ürün seçimi için teknik destek sağlıyoruz.</p>
-      <p><!-- [DOLDURULACAK] Kuruluş yılı, tesis büyüklüğü, önemli referans projeler gibi firmaya özel bilgileri buraya ekleyin. --></p>
+      <!-- [DOLDURULACAK] Kuruluş yılı, tesis büyüklüğü, önemli referans projeler gibi firmaya özel bilgileri buraya ekleyin. -->
     </div>
     <div class="facts">
       <div><b>6</b><span>ürün grubu</span></div>
       <div><b>25+</b><span>ürün tipi</span></div>
       <div><b>RAL</b><span>tüm renklerde toz boya seçeneği</span></div>
-      <div><b>TR</b><span>Türkiye geneline sevkiyat</span></div>
+      <div><b>81 il</b><span>Türkiye geneline sevkiyat</span></div>
     </div>
   </div>
 </section>
 
-<section class="alt" id="uretim" aria-labelledby="uretim-baslik">
+<section class="tint" id="uretim" aria-labelledby="uretim-baslik">
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Üretim süreci</span>
@@ -114,13 +116,15 @@
 
 <section class="cta-band" aria-label="Teklif">
   <div class="wrap">
-    <div>
-      <h2>Projenizin menfez ve damper listesini gönderin.</h2>
-      <p>Metraj listenizi veya proje çizimlerinizi iletin, aynı gün içinde fiyat teklifi hazırlayalım.</p>
-    </div>
-    <div class="actions">
-      <a class="btn btn-primary" href="iletisim.html#teklif">Teklif İste <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-      <a class="btn btn-ghost" href="https://wa.me/900000000000" target="_blank" rel="noopener">WhatsApp</a>
+    <div class="cta-box">
+      <div>
+        <h2>Projenizin menfez ve damper listesini gönderin.</h2>
+        <p>Metraj listenizi veya proje çizimlerinizi iletin, aynı gün içinde fiyat teklifi hazırlayalım.</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-sun" href="iletisim.html#teklif">Teklif İste <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-white" href="https://wa.me/900000000000" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
     </div>
   </div>
 </section>
@@ -129,7 +133,7 @@
 <footer class="site-footer">
   <div class="wrap">
     <div>
-      <img src="assets/img/logo-oguz-klima-beyaz.svg" alt="Oğuz Klima Havalandırma İnşaat San. ve Tic. Ltd. Şti." width="117" height="90">
+      <img src="assets/img/logo-oguz-klima.svg" alt="Oğuz Klima Havalandırma İnşaat San. ve Tic. Ltd. Şti." width="125" height="96">
       <p>Menfez, difüzör, damper ve panjur üretiminde projeye özel ölçü, hızlı teslim ve teknik destek.</p>
     </div>
     <div>
@@ -147,9 +151,9 @@
       <h4>Kurumsal</h4>
       <ul>
         <li><a href="hakkimizda.html">Hakkımızda</a></li>
+        <li><a href="projeler.html">Projeler</a></li>
         <li><a href="hakkimizda.html#uretim">Üretim Süreci</a></li>
         <li><a href="iletisim.html#teklif">Teklif İste</a></li>
-        <li><a href="iletisim.html">İletişim</a></li>
       </ul>
     </div>
     <div>
