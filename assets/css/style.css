@@ -296,6 +296,8 @@ section { padding-block: clamp(56px, 8vw, 104px); }
   display: grid; place-items: center;
 }
 .slide-art[data-illus] svg { width: 88%; height: auto; }
+.slide-art.product-shot { aspect-ratio: 1; width: min(40%, 500px); }
+.slide-art.product-shot img { width: 100%; height: 100%; object-fit: contain; }
 
 .slide-text {
   position: relative; z-index: 2;
@@ -365,6 +367,7 @@ section { padding-block: clamp(56px, 8vw, 104px); }
   .slide-text { align-content: end; padding-block: 48px 84px; gap: 14px; }
   .slide-text > * { max-width: 100%; }
   .slide-art { top: 20px; translate: -50% 0; left: 50%; right: auto; width: min(72%, 320px); }
+  .slide-art.product-shot { width: min(56vw, 230px); }
   .slide:not(.has-photo) .slide-text { align-content: start; padding-top: calc(min(72vw, 320px) * .9 + 40px); }
   .slide.has-photo::after { background: linear-gradient(0deg, rgba(20, 16, 70, .9) 0%, rgba(20, 16, 70, .6) 55%, rgba(20, 16, 70, .2) 100%); }
   .stat-strip .wrap { grid-template-columns: 1fr 1fr; }

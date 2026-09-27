@@ -262,6 +262,7 @@ PROJELER = [
 # Fotoğrafları  assets/img/slider/  klasörüne "foto" alanındaki adla koyun (ör. 01-menfez.jpg).
 # Yeni slayt eklemek için listeye bir kayıt daha ekleyin.
 # Önerilen ölçü: yatay, en az 1920×900 px, JPG/WebP, 400 KB altı.
+# "urun_foto": beyaz zeminli ürün fotoğrafı; açık zeminli slaytta sağda gösterilir.
 # Fotoğraf yoksa slaytta ürünün teknik çizimi gösterilir.
 # ---------------------------------------------------------------------------
 SLAYTLAR = [
@@ -274,6 +275,10 @@ SLAYTLAR = [
      "baslik": "Kanal üzeri ve duvar tipi menfezler, <em>ölçüye özel</em>.",
      "metin": "Tek ve çift sıra kanatlı, lineer ve transfer menfezler; projenizin ölçüsüne göre alüminyumdan üretilir.",
      "buton": ("Menfezleri incele", "urunler.html#menfezler")},
+    {"urun_foto": "menfez-cesitleri.webp", "etiket": "Menfez çeşitleri",
+     "baslik": "Tek sıra, çift sıra ve lineer <em>menfez</em> modelleri.",
+     "metin": "Alüminyum gövde; RAL 9010 beyaz veya istediğiniz renkte elektrostatik toz boya. Damperli ve plenumlu seçeneklerle.",
+     "buton": ("Menfez modelleri", "urunler.html#menfezler")},
     {"foto": "02-kanal.jpg", "illus": "duct", "etiket": "Kanal sistemleri", "odak": ("center", "68% center"),
      "baslik": "Havalandırma kanalınıza <em>tam uyumlu</em> ekipman.",
      "metin": "Damper, susturucu, plenum ve müdahale kapaklarıyla kanal hattının her noktası için çözüm.",
@@ -556,15 +561,20 @@ def slider():
     slaytlar = []
     noktalar = []
     for i, sl in enumerate(SLAYTLAR):
-        foto = ROOT / "assets/img/slider" / sl["foto"]
+        foto = ROOT / "assets/img/slider" / sl.get("foto", "-")
+        urun_foto = ROOT / "assets/img/slider" / sl.get("urun_foto", "-")
         aktif = " is-active" if i == 0 else ""
         gizli = "" if i == 0 else ' aria-hidden="true"'
-        if foto.exists():
+        if foto.is_file():
             yukle = 'fetchpriority="high"' if i == 0 else 'loading="lazy"'
             odak_d, odak_m = sl.get("odak", ("center", "center"))
             medya = (f'<img class="slide-img" src="assets/img/slider/{sl["foto"]}" alt="{escape(sl["etiket"])}" {yukle} '
                      f'style="--pos-d:{odak_d};--pos-m:{odak_m}">')
             cls = "slide has-photo"
+        elif urun_foto.is_file():
+            medya = (f'<div class="slide-art product-shot"><img src="assets/img/slider/{sl["urun_foto"]}" '
+                     f'alt="{escape(sl["etiket"])}" loading="lazy"></div>')
+            cls = "slide"
         elif i == 0:
             medya = f'<div class="slide-art hero-visual">{hero_svg()}</div>'
             cls = "slide"
