@@ -13,6 +13,7 @@ assets/img/projeler/     ← proje fotoğrafları: <slug>/01.jpg, 02.jpg ...
 assets/img/              ← logolar (SVG + PNG), favicon
 tools/build.py           ← sayfaları üreten betik: firma bilgileri ve ürün listesi burada
 docs/rakip-analizi.md    ← rakip analizi, anahtar kelimeler, yapılacaklar
+docs/google-kayit.md     ← Google İşletme Profili, Search Console ve teklif formu onayı
 sitemap.xml, robots.txt
 ```
 
@@ -22,4 +23,4 @@ sitemap.xml, robots.txt
 2. `python3 tools/build.py` çalıştırın; tüm sayfalar, `sitemap.xml` ve `robots.txt` yeniden oluşur.
 3. Yerelde görmek için: `python3 -m http.server` → http://localhost:8000
 
-`[DOLDURULACAK]` ile işaretli alanlar gerçek bilgilerle doldurulmalıdır.
+Teklif formları FormSubmit ile info@oguzklima.com adresine gelir; ilk gönderimden sonra gelen onay e-postasındaki bağlantıya bir kez tıklayın.

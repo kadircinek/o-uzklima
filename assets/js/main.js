@@ -4,7 +4,7 @@
      Gerçek ürün fotoğrafları geldiğinde <div class="illus"> içine <img> koymanız yeterli.
    - Ana sayfa slayt gösterisi
    - Proje filtresi ve fotoğraf galerisi
-   - Teklif formu
+   - Teklif formları (e-posta ile gönderim) ve teklif penceresi
 */
 (function () {
   "use strict";
@@ -386,33 +386,82 @@
     document.querySelectorAll(".cat-block").forEach(function (s) { io.observe(s); });
   }
 
-  /* ---------- Teklif formu ----------
-     Şimdilik form, doldurulan bilgilerle e-posta taslağı açar.
-     Canlıya alırken bir form servisine (ör. PHP mail, Formspree, Netlify Forms) bağlanmalıdır. */
-  var form = document.getElementById("teklif-formu");
-  if (form) {
-    var params = new URLSearchParams(location.search);
-    var urun = params.get("urun");
-    if (urun && form.elements.urun) form.elements.urun.value = urun;
+  /* ---------- Teklif formları ----------
+     Formlar FormSubmit (formsubmit.co) ile info@oguzklima.com adresine e-posta olarak gönderilir.
+     İlk gönderimden sonra bu adrese gelen "Activate Form" e-postasındaki bağlantıya bir kez tıklanmalıdır. */
+  var urunParam = new URLSearchParams(location.search).get("urun");
+
+  function secUrun(form, urun) {
+    var sel = form.querySelector("select");
+    if (!sel || !urun) return;
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].text === urun) { sel.selectedIndex = i; return; }
+    }
+  }
+
+  document.querySelectorAll(".teklif-form").forEach(function (form) {
+    secUrun(form, urunParam);
+    var status = form.querySelector(".status");
+    var btn = form.querySelector('button[type="submit"]');
+    var btnText = btn.innerHTML;
+    var goster = function (msg, hata) {
+      status.hidden = false;
+      status.classList.toggle("is-error", !!hata);
+      status.innerHTML = msg;
+    };
 
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
-      var f = form.elements;
-      var body = [
-        "Ad Soyad: " + f.ad.value,
-        "Firma: " + f.firma.value,
-        "Telefon: " + f.telefon.value,
-        "E-posta: " + f.eposta.value,
-        "Ürün grubu: " + f.urun.value,
-        "",
-        f.mesaj.value
-      ].join("\n");
-      var to = form.getAttribute("data-to");
-      var status = document.getElementById("form-status");
-      status.hidden = false;
-      status.textContent = "E-posta uygulamanız açılıyor. Açılmazsa talebinizi " + to + " adresine gönderebilirsiniz.";
-      location.href = "mailto:" + to + "?subject=" + encodeURIComponent("Teklif talebi – " + f.urun.value) + "&body=" + encodeURIComponent(body);
+      var eksik = Array.prototype.filter.call(form.querySelectorAll("[required]"), function (el) { return !el.value.trim(); });
+      if (eksik.length) {
+        goster("Lütfen ad soyad ve telefon alanlarını doldurun.", true);
+        eksik[0].focus();
+        return;
+      }
+      var data = new FormData(form);
+      var urun = data.get("Ürün grubu") || "";
+      data.append("_subject", "Web sitesinden teklif talebi – " + urun);
+      data.append("_template", "table");
+      data.append("_captcha", "false");
+      data.append("Sayfa", location.href);
+
+      btn.disabled = true;
+      btn.textContent = "Gönderiliyor…";
+      fetch(form.getAttribute("data-endpoint"), { method: "POST", body: data, headers: { Accept: "application/json" } })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (!res.ok || String(res.j.success) !== "true") throw new Error(res.j.message || "Gönderilemedi");
+          form.reset();
+          secUrun(form, urun);
+          goster("<strong>Teşekkürler, talebiniz bize ulaştı.</strong> En kısa sürede size dönüş yapacağız.");
+        })
+        .catch(function () {
+          var wa = document.querySelector(".wa");
+          goster("Talebiniz şu anda gönderilemedi. Lütfen bizi arayın, " +
+            '<a href="' + (wa ? wa.href : "#") + '" target="_blank" rel="noopener">WhatsApp</a> ile yazın veya ' +
+            '<a href="mailto:info@oguzklima.com">info@oguzklima.com</a> adresine e-posta gönderin.', true);
+        })
+        .then(function () { btn.disabled = false; btn.innerHTML = btnText; });
     });
+  });
+
+  /* "Teklif İste" bağlantıları: iletişim sayfasında forma kaydırır, diğer sayfalarda açılır pencerede formu açar */
+  var qd = document.getElementById("teklif-dialog");
+  var sayfaFormu = document.querySelector("#teklif .teklif-form");
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest('a[href*="#teklif"]');
+    if (!a || sayfaFormu || !qd || typeof qd.showModal !== "function") return;
+    ev.preventDefault();
+    var urun = new URL(a.href, location.href).searchParams.get("urun");
+    var f = qd.querySelector(".teklif-form");
+    secUrun(f, urun);
+    qd.showModal();
+    var ilk = f.querySelector("input");
+    if (ilk) ilk.focus();
+  });
+  if (qd) {
+    qd.querySelector("[data-close]").addEventListener("click", function () { qd.close(); });
+    qd.addEventListener("click", function (e) { if (e.target === qd) qd.close(); });
   }
 
   var y = document.getElementById("yil");

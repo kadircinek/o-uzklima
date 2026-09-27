@@ -9,6 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 from html import escape
+from urllib.parse import quote, quote_plus
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -23,16 +24,32 @@ def surum(yol):
 FIRMA = {
     "ad": "Oğuz Klima",
     "unvan": "Oğuz Klima Havalandırma İnşaat San. ve Tic. Ltd. Şti.",
-    "domain": "https://www.oguzklima.com.tr",        # [DOLDURULACAK] gerçek alan adı
-    "telefon": "+90 XXX XXX XX XX",                   # [DOLDURULACAK]
-    "telefon_link": "+900000000000",                  # [DOLDURULACAK] boşluksuz
-    "whatsapp": "900000000000",                       # [DOLDURULACAK] ülke koduyla, + olmadan
-    "eposta": "info@oguzklima.com.tr",                # [DOLDURULACAK]
-    "adres": "Adres bilgisi eklenecek",               # [DOLDURULACAK]
-    "sehir": "İstanbul",                              # [DOLDURULACAK]
-    "calisma": "Pazartesi – Cumartesi · 08:30 – 18:00",
-    "kurulus": "",                                    # [DOLDURULACAK] ör. "2005"
+    "domain": "https://www.oguzklima.com",           # e-posta alan adına göre; farklıysa değiştirin
+    "kurulus": "1996",
+    # Telefonlar: (etiket, görünen, arama bağlantısı)
+    "sabit": ("Sabit hat", "0216 421 55 15", "+902164215515"),
+    "cep1": ("Cep", "0532 612 45 81", "+905326124581"),
+    "cep2": ("Cep", "0544 421 55 15", "+905444215515"),
+    "whatsapp": "905326124581",                        # ülke koduyla, + ve boşluk olmadan
+    "whatsapp_gorunen": "0532 612 45 81",
+    "whatsapp_mesaj": "Merhaba, Oğuz Klima web sitesinden yazıyorum. Teklif almak istiyorum.",
+    "eposta": "info@oguzklima.com",
+    "sokak": "Yavuztürk Mah. Tarih Cad. No: 10",
+    "ilce": "Üsküdar",
+    "sehir": "İstanbul",
+    "posta_kodu": "34692",
+    "calisma": "Pazartesi – Cumartesi · 08:30 – 18:00",  # [KONTROL EDİN] çalışma saatleri
+    "saatler_ld": [("Monday", "Saturday", "08:30", "18:00")],
 }
+FIRMA["adres"] = f"{FIRMA['sokak']}, {FIRMA['posta_kodu']} {FIRMA['ilce']} / {FIRMA['sehir']}"
+FIRMA["telefon"], FIRMA["telefon_link"] = FIRMA["sabit"][1], FIRMA["sabit"][2]
+FIRMA["yil"] = str(2026 - int(FIRMA["kurulus"]))
+_harita_q = FIRMA["sokak"] + " " + FIRMA["ilce"] + " " + FIRMA["sehir"]
+FIRMA["harita_link"] = "https://www.google.com/maps/search/?api=1&query=" + quote_plus(_harita_q)
+FIRMA["harita_embed"] = "https://maps.google.com/maps?q=" + quote_plus(_harita_q) + "&z=16&output=embed"
+FIRMA["wa_link"] = f"https://wa.me/{FIRMA['whatsapp']}?text=" + quote(FIRMA["whatsapp_mesaj"])
+# Teklif formları bu adrese gönderilir (FormSubmit: ilk gönderimde e-postanıza gelen onay linkine tıklayın)
+FIRMA["form_adresi"] = "https://formsubmit.co/ajax/" + FIRMA["eposta"]
 
 # ---------------------------------------------------------------------------
 # ÜRÜNLER — kategori > ürün. "illus" değeri assets/js/main.js içindeki çizim adıdır.
@@ -267,7 +284,7 @@ PROJELER = [
 # ---------------------------------------------------------------------------
 SLAYTLAR = [
     # "odak": fotoğrafın hangi kısmının görüneceği — (masaüstü, mobil) CSS object-position değerleri
-    {"foto": "00-urunler.jpg", "illus": "grille-double", "etiket": "Havalandırma ekipmanları üretimi", "odak": ("center 60%", "62% center"),
+    {"foto": "00-urunler.jpg", "illus": "grille-double", "etiket": "1996'dan beri havalandırma ekipmanları", "odak": ("center 60%", "62% center"),
      "baslik": "Menfezden dampere,<br>havanın <em>yönünü</em> biz çiziyoruz.",
      "metin": "Menfez, difüzör, panjur ve damperleri projenizin ölçüsüne göre üretiyoruz. Hastaneden fabrikaya tek tedarikçi.",
      "buton": ("Ürünleri incele", "urunler.html")},
@@ -315,19 +332,30 @@ def head(title, desc, path, extra_ld=None):
     url = FIRMA["domain"] + "/" + ("" if path == "index.html" else path)
     ld = {
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
+        "@type": "HVACBusiness",
         "@id": FIRMA["domain"] + "/#firma",
         "name": FIRMA["unvan"],
         "alternateName": FIRMA["ad"],
         "url": FIRMA["domain"],
         "logo": FIRMA["domain"] + "/assets/img/logo-oguz-klima.png",
-        "image": FIRMA["domain"] + "/assets/img/logo-oguz-klima.png",
-        "telephone": FIRMA["telefon"],
+        "image": [FIRMA["domain"] + "/assets/img/logo-oguz-klima.png", FIRMA["domain"] + "/assets/img/slider/00-urunler.jpg"],
+        "foundingDate": FIRMA["kurulus"],
+        "telephone": FIRMA["sabit"][2],
         "email": FIRMA["eposta"],
-        "address": {"@type": "PostalAddress", "streetAddress": FIRMA["adres"],
-                    "addressLocality": FIRMA["sehir"], "addressCountry": "TR"},
-        "areaServed": "TR",
-        "description": "Menfez, difüzör, damper, panjur, müdahale kapağı ve susturucu üretimi.",
+        "address": {"@type": "PostalAddress", "streetAddress": FIRMA["sokak"], "addressLocality": FIRMA["ilce"],
+                    "addressRegion": FIRMA["sehir"], "postalCode": FIRMA["posta_kodu"], "addressCountry": "TR"},
+        "hasMap": FIRMA["harita_link"],
+        "areaServed": {"@type": "Country", "name": "Türkiye"},
+        "contactPoint": [
+            {"@type": "ContactPoint", "telephone": t[2], "contactType": "sales", "areaServed": "TR", "availableLanguage": "Turkish"}
+            for t in (FIRMA["sabit"], FIRMA["cep1"], FIRMA["cep2"])],
+        "openingHoursSpecification": [
+            {"@type": "OpeningHoursSpecification", "dayOfWeek": [g for g in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                                                                  ][["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].index(bas):
+                                                                    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].index(son) + 1],
+             "opens": ac, "closes": kapa} for bas, son, ac, kapa in FIRMA["saatler_ld"]],
+        "description": f"{FIRMA['kurulus']} yılından beri menfez, difüzör, damper, panjur, müdahale kapağı ve susturucu üretimi. Üsküdar, İstanbul.",
+        "knowsAbout": ["Menfez", "Difüzör", "Yangın damperi", "Hava damperi", "VAV", "Dış hava panjuru", "Müdahale kapağı", "Susturucu", "Jet nozul"],
     }
     blocks = [ld] + (extra_ld or [])
     ld_html = "\n".join('<script type="application/ld+json">' + json.dumps(b, ensure_ascii=False) + "</script>" for b in blocks)
@@ -341,6 +369,8 @@ def head(title, desc, path, extra_ld=None):
 <link rel="canonical" href="{url}">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#2f2483">
+<meta name="geo.region" content="TR-34">
+<meta name="geo.placename" content="{FIRMA['ilce']}, {FIRMA['sehir']}">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="tr_TR">
 <meta property="og:site_name" content="{FIRMA['ad']}">
@@ -371,10 +401,11 @@ def header(active):
 <div class="topbar">
   <div class="wrap">
     <div class="tb-group">
-      <a href="tel:{FIRMA['telefon_link']}">{FIRMA['telefon']}</a>
+      <a href="tel:{FIRMA['sabit'][2]}">{FIRMA['sabit'][1]}</a>
+      <a href="tel:{FIRMA['cep1'][2]}">{FIRMA['cep1'][1]}</a>
       <a href="mailto:{FIRMA['eposta']}">{FIRMA['eposta']}</a>
     </div>
-    <div class="tb-group"><span>{FIRMA['calisma']}</span></div>
+    <div class="tb-group"><span>{FIRMA['ilce']} / {FIRMA['sehir']}</span><span>{FIRMA['calisma']}</span></div>
   </div>
 </div>
 <header class="site-header">
@@ -392,6 +423,36 @@ def header(active):
   </div>
 </header>
 <main id="icerik">"""
+
+
+def teklif_form(on, baslik_id, baslik, h_tag="h2"):
+    """Teklif formu. Gönderimler FormSubmit ile FIRMA['eposta'] adresine e-posta olarak gelir."""
+    opts = "".join(f"<option>{k['ad']}</option>" for k in KATEGORILER)
+    return f"""<form class="form teklif-form" data-endpoint="{FIRMA['form_adresi']}" aria-labelledby="{baslik_id}" novalidate>
+        <{h_tag} id="{baslik_id}">{baslik}</{h_tag}>
+        <label for="{on}-ad">Ad Soyad *<input id="{on}-ad" name="Ad Soyad" autocomplete="name" required></label>
+        <label for="{on}-firma">Firma<input id="{on}-firma" name="Firma" autocomplete="organization"></label>
+        <label for="{on}-tel">Telefon *<input id="{on}-tel" name="Telefon" type="tel" autocomplete="tel" required></label>
+        <label for="{on}-eposta">E-posta<input id="{on}-eposta" name="email" type="email" autocomplete="email"></label>
+        <label class="full" for="{on}-urun">Ürün grubu<select id="{on}-urun" name="Ürün grubu">{opts}<option>Birden fazla / proje listesi</option></select></label>
+        <label class="full" for="{on}-mesaj">Mesajınız<textarea id="{on}-mesaj" name="Mesaj" placeholder="Ürün, ölçü ve adet bilgisi. Örn: Çift sıra kanatlı menfez, 400×200 mm, 24 adet, RAL 9010"></textarea></label>
+        <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+        <p class="note">Proje dosyalarınızı (PDF, DWG, Excel) <a href="mailto:{FIRMA['eposta']}">{FIRMA['eposta']}</a> adresine veya
+          <a href="{FIRMA['wa_link']}" target="_blank" rel="noopener">WhatsApp</a> ile gönderebilirsiniz.</p>
+        <p class="status" role="status" hidden></p>
+        <div class="full"><button class="btn btn-primary" type="submit">Teklif talebini gönder {ICON['arrow']}</button></div>
+      </form>"""
+
+
+TEKLIF_DIALOG_ID = "teklif-dialog"
+
+
+def teklif_dialog():
+    return f"""
+<dialog class="quote-dialog" id="{TEKLIF_DIALOG_ID}" aria-labelledby="qd-baslik">
+  <button class="pd-close" type="button" aria-label="Kapat" data-close>×</button>
+  {teklif_form("qd", "qd-baslik", "Teklif isteyin", "h2")}
+</dialog>"""
 
 
 PROJE_DIALOG = """
@@ -416,11 +477,12 @@ def footer(dialog=False):
     cats = "\n".join(f'        <li><a href="urunler.html#{k["id"]}">{k["ad"]}</a></li>' for k in KATEGORILER)
     return f"""</main>
 {PROJE_DIALOG if dialog else ""}
+{teklif_dialog()}
 <footer class="site-footer">
   <div class="wrap">
     <div>
       <img src="assets/img/logo-oguz-klima-beyaz.svg" alt="{FIRMA['unvan']}" width="117" height="90">
-      <p>Menfez, difüzör, damper ve panjur üretiminde projeye özel ölçü, hızlı teslim ve teknik destek.</p>
+      <p>{FIRMA['kurulus']}'dan bu yana menfez, difüzör, damper ve panjur üretiminde projeye özel ölçü, hızlı teslim ve teknik destek.</p>
     </div>
     <div>
       <h4>Ürünler</h4>
@@ -440,9 +502,10 @@ def footer(dialog=False):
     <div>
       <h4>İletişim</h4>
       <ul>
-        <li><a href="tel:{FIRMA['telefon_link']}">{FIRMA['telefon']}</a></li>
+        <li><a href="tel:{FIRMA['sabit'][2]}">{FIRMA['sabit'][1]}</a></li>
+        <li><a href="tel:{FIRMA['cep1'][2]}">{FIRMA['cep1'][1]}</a> · <a href="tel:{FIRMA['cep2'][2]}">{FIRMA['cep2'][1]}</a></li>
         <li><a href="mailto:{FIRMA['eposta']}">{FIRMA['eposta']}</a></li>
-        <li>{FIRMA['adres']}</li>
+        <li><a href="{FIRMA['harita_link']}" target="_blank" rel="noopener">{FIRMA['adres']}</a></li>
         <li>{FIRMA['calisma']}</li>
       </ul>
     </div>
@@ -455,7 +518,7 @@ def footer(dialog=False):
   </div>
 </footer>
 
-<a class="wa" href="https://wa.me/{FIRMA['whatsapp']}" target="_blank" rel="noopener" aria-label="WhatsApp ile yazın">{ICON['wa']}</a>
+<a class="wa" href="{FIRMA['wa_link']}" target="_blank" rel="noopener" aria-label="WhatsApp ile yazın">{ICON['wa']}</a>
 <script src="assets/js/main.js?v={surum('assets/js/main.js')}" defer></script>
 </body>
 </html>
@@ -472,7 +535,7 @@ def cta_band():
     </div>
     <div class="actions">
       <a class="btn btn-primary" href="iletisim.html#teklif">Teklif İste {ICON['arrow']}</a>
-      <a class="btn btn-ghost" href="https://wa.me/{FIRMA['whatsapp']}" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn btn-ghost" href="{FIRMA['wa_link']}" target="_blank" rel="noopener">WhatsApp</a>
     </div>
   </div>
 </section>"""
@@ -612,10 +675,10 @@ def slider():
 
 <div class="stat-strip">
   <div class="wrap">
+    <div><b>{FIRMA['yil']} yıl</b><span>{FIRMA['kurulus']}'dan beri</span></div>
     <div><b>{len(KATEGORILER)}</b><span>ürün grubu</span></div>
     <div><b>{len(TUM_URUNLER)}+</b><span>ürün tipi</span></div>
     <div><b>%100</b><span>ölçüye özel üretim</span></div>
-    <div><b>RAL</b><span>tüm renklerde toz boya</span></div>
   </div>
 </div>"""
 
@@ -641,9 +704,9 @@ def index():
         "inLanguage": "tr-TR"}]
 
     return head(
-        "Menfez, Difüzör, Damper ve Panjur Üreticisi | Oğuz Klima Havalandırma",
-        "Oğuz Klima; menfez, difüzör, yangın damperi, VAV, dış hava panjuru, müdahale kapağı ve susturucu üretir. "
-        "Projeye özel ölçü, hızlı teslim. Hemen teklif alın.",
+        "Oğuz Klima | Menfez, Difüzör, Damper ve Panjur Üreticisi – İstanbul",
+        f"{FIRMA['kurulus']}'dan beri İstanbul Üsküdar'da menfez, difüzör, yangın damperi, VAV, dış hava panjuru ve susturucu üretimi. "
+        f"Projeye özel ölçü, hızlı teslim. Teklif: {FIRMA['sabit'][1]}",
         "index.html", ld_extra) + header("index.html") + f"""
 
 {slider()}
@@ -695,7 +758,7 @@ def index():
       <h2 id="neden-baslik" style="font-size:clamp(30px,3.8vw,46px);font-weight:800;margin-top:14px">Şartnameye uygun ürün, söz verilen tarihte şantiyede.</h2>
       <div class="why-list">
         <div class="why-item"><div class="ic">{ICON['ruler']}</div><div><h3>Ölçüye özel üretim</h3><p>Standart ölçülerin dışındaki menfez, difüzör ve damperleri projenize göre imal ediyoruz.</p></div></div>
-        <div class="why-item"><div class="ic">{ICON['factory']}</div><div><h3>Kendi üretim tesisimiz</h3><p>Kesimden boyaya kadar tüm aşamalar kontrolümüzde; kalite ve termin tek elden yönetilir.</p></div></div>
+        <div class="why-item"><div class="ic">{ICON['factory']}</div><div><h3>{FIRMA['yil']} yıllık tecrübe</h3><p>{FIRMA['kurulus']}'dan bu yana farklı ölçek ve sektörlerdeki projelerde edindiğimiz bilgiyi her yeni işe taşıyoruz.</p></div></div>
         <div class="why-item"><div class="ic">{ICON['truck']}</div><div><h3>Hızlı teslimat</h3><p>Stoklu ürünlerde hızlı sevkiyat, proje siparişlerinde iş programınıza uygun parçalı teslim.</p></div></div>
         <div class="why-item"><div class="ic">{ICON['shield']}</div><div><h3>Teknik destek</h3><p>Ürün seçimi, debi ve ölçü hesabında mekanik proje ekiplerinizle birlikte çalışıyoruz.</p></div></div>
       </div>
@@ -816,26 +879,29 @@ def projeler():
 def hakkimizda():
     return head(
         "Hakkımızda | Oğuz Klima Havalandırma İnşaat",
-        "Oğuz Klima Havalandırma İnşaat San. ve Tic. Ltd. Şti. hakkında: üretim sürecimiz, kalite anlayışımız ve hizmet verdiğimiz sektörler.",
+        f"{FIRMA['kurulus']} yılında kurulan Oğuz Klima Havalandırma İnşaat; {FIRMA['yil']} yıllık tecrübeyle menfez, difüzör, damper ve panjur üretir. Üretim sürecimiz ve çalışma anlayışımız.",
         "hakkimizda.html") + header("hakkimizda.html") + page_hero(
         "Hakkımızda", "Hakkımızda",
-        "Havalandırma sistemlerinin görünen yüzü olan menfez ve difüzörlerden, kanal içindeki damper ve susturuculara kadar üretim yapıyoruz.") + f"""
+        f"{FIRMA['kurulus']}'dan bu yana menfez ve difüzörlerden kanal içindeki damper ve susturuculara kadar havalandırma ekipmanı üretiyoruz.") + f"""
 <section>
   <div class="wrap about-grid">
     <div class="prose">
-      <span class="eyebrow">Biz kimiz</span>
-      <h2 style="font-size:clamp(28px,3.4vw,42px);font-weight:800">Proje ekiplerinin güvendiği havalandırma ekipmanı tedarikçisi</h2>
-      <p>{FIRMA['unvan']}, havalandırma ve iklimlendirme sistemleri için hava dağıtım ve kontrol ekipmanları üretir.
-        Menfez, difüzör, damper, panjur, müdahale kapağı ve susturucu ürün gruplarımızla mekanik taahhüt firmalarına,
-        proje ofislerine ve yatırımcılara hizmet veriyoruz.</p>
-      <p>Her projenin ölçüsü, debisi ve mimari beklentisi farklıdır. Bu nedenle ürünlerimizi standart katalog ölçülerinin
-        yanında projeye özel olarak da üretiyor, doğru ürün seçimi için teknik destek sağlıyoruz.</p>
-      <!-- [DOLDURULACAK] Kuruluş yılı, tesis büyüklüğü, önemli referans projeler gibi firmaya özel bilgileri buraya ekleyin. -->
+      <span class="eyebrow">{FIRMA['kurulus']}'dan bu yana</span>
+      <h2 style="font-size:clamp(28px,3.4vw,42px);font-weight:800">{FIRMA['yil']} yıldır havanın doğru yönde akması için çalışıyoruz.</h2>
+      <p>{FIRMA['ad']}, {FIRMA['kurulus']} yılında tek bir hedefle kuruldu: projeye tam uyan, yıllarca sorunsuz çalışan
+        havalandırma ekipmanı üretmek. Menfezden difüzöre, damperden panjura kadar bugün sunduğumuz her ürün,
+        bu ilk günkü hedefin üzerine inşa edildi.</p>
+      <p>Geride kalan {FIRMA['yil']} yılda her projeden yeni bir şey öğrendik. Müşteri portföyümüz büyüdükçe üretim
+        kabiliyetimizi, kalite kontrolümüzü ve hizmet anlayışımızı da aynı kararlılıkla geliştirdik. Bugün mekanik taahhüt
+        firmaları, proje ofisleri ve yatırımcılar için güvenilir bir çözüm ortağıyız.</p>
+      <p>Her projenin ölçüsü, debisi ve mimari beklentisi farklıdır. Bu yüzden standart ürünlerin yanında projeye özel
+        üretim yapıyor; ürün seçiminden sevkiyata kadar her adımda yanınızda oluyoruz.</p>
+      <p><strong>Değişmeyen tek şey sözümüz:</strong> söz verdiğimiz tarihte, şartnamedeki ölçüde ve ilk günkü özenle.</p>
     </div>
     <div class="facts">
-      <div><b>{len(KATEGORILER)}</b><span>ürün grubu</span></div>
-      <div><b>{len(TUM_URUNLER)}+</b><span>ürün tipi</span></div>
-      <div><b>RAL</b><span>tüm renklerde toz boya seçeneği</span></div>
+      <div><b>{FIRMA['kurulus']}</b><span>kuruluş yılı</span></div>
+      <div><b>{FIRMA['yil']} yıl</b><span>sektör tecrübesi</span></div>
+      <div><b>{len(TUM_URUNLER)}+</b><span>ürün tipi, {len(KATEGORILER)} ürün grubu</span></div>
       <div><b>TR</b><span>Türkiye geneline sevkiyat</span></div>
     </div>
   </div>
@@ -865,9 +931,9 @@ def hakkimizda():
       <h2>Söz verdiğimiz tarih, şartnamedeki ölçü</h2>
     </div>
     <div class="values">
-      <article><h3>Kalite</h3><p>Hammadde girişinden sevkiyata kadar her partide ölçü ve yüzey kontrolü yapıyoruz.</p></article>
-      <article><h3>Termin</h3><p>Şantiye iş programınıza göre parçalı ve etiketli sevkiyat planlıyoruz.</p></article>
-      <article><h3>Destek</h3><p>Ürün seçimi, montaj detayı ve saha sorularında ulaşabileceğiniz bir teknik ekip.</p></article>
+      <article><h3>Misyonumuz</h3><p>Her projeye ölçüsüne, debisine ve mimarisine tam uyan havalandırma ekipmanını, söz verdiğimiz sürede teslim etmek.</p></article>
+      <article><h3>Vizyonumuz</h3><p>Türkiye'nin dört bir yanındaki projelerde, kalitesiyle ilk akla gelen havalandırma ekipmanı üreticisi olmak.</p></article>
+      <article><h3>Değerlerimiz</h3><p>Dürüst fiyat, doğru ölçü, zamanında teslim ve satıştan sonra da ulaşılabilir bir teknik ekip.</p></article>
     </div>
   </div>
 </section>
@@ -882,7 +948,7 @@ def iletisim():
     opts = "".join(f"<option>{k['ad']}</option>" for k in KATEGORILER)
     return head(
         "İletişim ve Teklif | Oğuz Klima Havalandırma",
-        "Menfez, difüzör, damper ve panjur siparişleriniz için Oğuz Klima ile iletişime geçin. Teklif formu, telefon ve WhatsApp.",
+        f"Oğuz Klima iletişim: {FIRMA['adres']}. Tel: {FIRMA['sabit'][1]} · {FIRMA['cep1'][1]}. Menfez, difüzör, damper ve panjur için teklif formu ve WhatsApp.",
         "iletisim.html") + header("iletisim.html") + page_hero(
         "İletişim", "İletişim & Teklif",
         "Metraj listenizi, proje çiziminizi veya ürün sorunuzu iletin; en kısa sürede dönüş yapalım.") + f"""
@@ -890,30 +956,21 @@ def iletisim():
   <div class="wrap">
     <div class="contact-grid">
       <div class="contact-cards">
-        <div class="contact-card"><div class="ic">{ICON['phone']}</div><div><h3>Telefon</h3><a href="tel:{FIRMA['telefon_link']}">{FIRMA['telefon']}</a></div></div>
-        <div class="contact-card"><div class="ic">{ICON['wa']}</div><div><h3>WhatsApp</h3><a href="https://wa.me/{FIRMA['whatsapp']}" target="_blank" rel="noopener">Mesaj gönderin</a></div></div>
+        <div class="contact-card"><div class="ic">{ICON['phone']}</div><div><h3>Sabit hat</h3><a href="tel:{FIRMA['sabit'][2]}">{FIRMA['sabit'][1]}</a></div></div>
+        <div class="contact-card"><div class="ic">{ICON['phone']}</div><div><h3>Cep telefonu</h3><a href="tel:{FIRMA['cep1'][2]}">{FIRMA['cep1'][1]}</a><br><a href="tel:{FIRMA['cep2'][2]}">{FIRMA['cep2'][1]}</a></div></div>
+        <div class="contact-card"><div class="ic">{ICON['wa']}</div><div><h3>WhatsApp</h3><a href="{FIRMA['wa_link']}" target="_blank" rel="noopener">{FIRMA['whatsapp_gorunen']} · Mesaj gönderin</a></div></div>
         <div class="contact-card"><div class="ic">{ICON['mail']}</div><div><h3>E-posta</h3><a href="mailto:{FIRMA['eposta']}">{FIRMA['eposta']}</a></div></div>
-        <div class="contact-card"><div class="ic">{ICON['pin']}</div><div><h3>Adres</h3><p>{FIRMA['adres']}</p></div></div>
+        <div class="contact-card"><div class="ic">{ICON['pin']}</div><div><h3>Adres</h3><p>{FIRMA['adres']}</p><a class="more-link" href="{FIRMA['harita_link']}" target="_blank" rel="noopener">Yol tarifi al →</a></div></div>
         <div class="contact-card"><div class="ic">{ICON['clock']}</div><div><h3>Çalışma saatleri</h3><p>{FIRMA['calisma']}</p></div></div>
       </div>
 
-      <form class="form" id="teklif-formu" data-to="{FIRMA['eposta']}" aria-labelledby="teklif">
-        <h2 id="teklif">Teklif formu</h2>
-        <label for="f-ad">Ad Soyad<input id="f-ad" name="ad" autocomplete="name" required></label>
-        <label for="f-firma">Firma<input id="f-firma" name="firma" autocomplete="organization"></label>
-        <label for="f-tel">Telefon<input id="f-tel" name="telefon" type="tel" autocomplete="tel" required></label>
-        <label for="f-eposta">E-posta<input id="f-eposta" name="eposta" type="email" autocomplete="email"></label>
-        <label class="full" for="f-urun">Ürün grubu<select id="f-urun" name="urun">{opts}<option>Birden fazla / proje listesi</option></select></label>
-        <label class="full" for="f-mesaj">Mesajınız<textarea id="f-mesaj" name="mesaj" placeholder="Ürün, ölçü ve adet bilgisi. Örn: OK-CSK çift sıra kanatlı menfez, 400×200 mm, 24 adet, RAL 9010"></textarea></label>
-        <p class="note">Proje dosyalarınızı (PDF, DWG, Excel) e-posta veya WhatsApp ile iletebilirsiniz.</p>
-        <p class="status" id="form-status" role="status" hidden></p>
-        <div class="full"><button class="btn btn-primary" type="submit">Teklif talebini gönder {ICON['arrow']}</button></div>
-      </form>
+      <div id="teklif" class="form-anchor">
+      {teklif_form("tf", "teklif-baslik", "Teklif formu")}
+      </div>
     </div>
 
     <div class="map-box">
-      <!-- [DOLDURULACAK] Google Haritalar > Paylaş > Harita yerleştir kodundaki iframe'i buraya yapıştırın. -->
-      <p>Harita, adres bilgisi eklendiğinde burada görünecek.</p>
+      <iframe src="{FIRMA['harita_embed']}" title="{FIRMA['ad']} konumu: {FIRMA['adres']}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </div>
 </section>
