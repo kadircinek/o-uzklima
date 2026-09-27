@@ -199,26 +199,22 @@ ICON["camera"] = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 ICON["star"] = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>'
 ICON["box"] = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>'
 
-# Her ürün grubunun kart rengi
-TON = {"menfezler": "", "difuzorler": "t-mint", "damperler": "t-sun",
-       "panjurlar": "t-coral", "kapaklar": "t-lilac", "susturucular": ""}
-
 # ---------------------------------------------------------------------------
-# UYGULAMA ALANLARI — "sahne" değeri assets/js/main.js içindeki mekân çizimidir
+# UYGULAMA ALANLARI
 # ---------------------------------------------------------------------------
 SEKTOR = [
-    ("hastane", "Hastaneler", "hospital", "Hijyen ve basınç kontrolünün kritik olduğu ameliyathane, yoğun bakım ve hasta odaları.",
-     ["Perfore difüzör", "Basınç tahliye", "Yangın damperi"]),
-    ("avm", "AVM & Mağazalar", "mall", "Yüksek tavanlı, kalabalık alanlarda homojen ve güçlü hava dağıtımı.",
-     ["Swirl difüzör", "Jet nozul", "Lineer slot"]),
-    ("ofis", "Ofis & Plazalar", "office", "Konforlu, sessiz ve mimariyle uyumlu çizgisel hava dağıtımı.",
-     ["Lineer slot difüzör", "VAV terminal", "Kare difüzör"]),
-    ("otopark", "Otoparklar", "parking", "Egzoz gazı ve duman tahliyesi için panjur ve damper çözümleri.",
-     ["Dış hava panjuru", "Yangın damperi", "Menfez"]),
-    ("endustri", "Endüstriyel Tesisler", "factory", "Tozlu ve zorlu ortamlar için dayanıklı, ağır hizmet ekipmanları.",
-     ["Kum tutuculu panjur", "Jet nozul", "Susturucu"]),
-    ("otel", "Otel & Konut", "hotel", "Misafir konforu için sessiz çalışan, göze batmayan menfez çözümleri.",
-     ["Lineer menfez", "Transfer menfez", "Müdahale kapağı"]),
+    ("hastane", "Hastaneler", "Hijyenik perfore difüzör, basınç tahliye ve yangın damperleri.",
+     '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="8" width="28" height="26" rx="2"/><path d="M20 13v10M15 18h10M14 34v-6h12v6"/></svg>'),
+    ("avm", "AVM & Mağaza", "Yüksek tavanlar için swirl difüzör ve jet nozul.",
+     '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 14h24l-2 20H10z"/><path d="M15 14v-3a5 5 0 0 1 10 0v3"/></svg>'),
+    ("ofis", "Ofis & Plaza", "Lineer slot difüzör ve VAV ile zon kontrolü.",
+     '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="5" width="22" height="30"/><path d="M14 11h4m4 0h4M14 17h4m4 0h4M14 23h4m4 0h4M17 35v-5h6v5"/></svg>'),
+    ("otopark", "Otopark", "Jet fan hatları ve duman tahliye için panjur ve damperler.",
+     '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="28" height="28" rx="3"/><path d="M16 29V12h6a5 5 0 0 1 0 10h-6"/></svg>'),
+    ("endustri", "Endüstri", "Kum tutuculu panjur, susturucu ve ağır hizmet damperleri.",
+     '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 34V18l9 6v-6l9 6V8h10v26z"/><path d="M10 29h3m6 0h3"/></svg>'),
+    ("otel", "Otel & Konut", "Sessiz çalışan menfez, transfer menfez ve müdahale kapakları.",
+     '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 30V12M5 24h30v6M35 24v-4a4 4 0 0 0-4-4H18v8"/><circle cx="11" cy="19" r="3"/></svg>'),
 ]
 SEKTOR_AD = {s[0]: s[1] for s in SEKTOR}
 SEKTOR_AD["spor"] = "Spor & Eğitim"
@@ -229,43 +225,35 @@ SEKTOR_AD["cephe"] = "Cephe & Çatı"
 #
 # Fotoğraf eklemek için:  assets/img/projeler/<slug>/  klasörü açın ve içine .jpg/.webp/.png koyun.
 # build.py klasördeki fotoğrafları otomatik bulur; ilk fotoğraf kapak olur (01.jpg, 02.jpg ... diye adlandırın).
-# Fotoğraf yoksa sektöre uygun çizim gösterilir.
+# Fotoğraf yoksa projede kullanılan ana ürünün teknik çizimi gösterilir ("illus").
 #
 # "ornek": True olanlar ÖRNEK kayıtlardır; gerçek projelerinizle değiştirin veya silin.
 # ---------------------------------------------------------------------------
 PROJELER = [
-    {"slug": "ornek-hastane", "baslik": "Özel Hastane Havalandırma Ekipmanları", "sektor": "hastane", "sahne": "hospital",
+    {"slug": "ornek-hastane", "baslik": "Özel Hastane Havalandırma Ekipmanları", "sektor": "hastane", "illus": "perforated",
      "sehir": "Şehir eklenecek", "yil": "", "ornek": True,
      "aciklama": "Ameliyathane ve hasta katları için perfore difüzör, basınç tahliye ve yangın damperi temini.",
      "urunler": ["Perfore Difüzör", "Basınç Tahliye Damperi", "Yangın Damperi", "Müdahale Kapağı"]},
-    {"slug": "ornek-avm", "baslik": "Alışveriş Merkezi Ortak Alanları", "sektor": "avm", "sahne": "mall",
+    {"slug": "ornek-avm", "baslik": "Alışveriş Merkezi Ortak Alanları", "sektor": "avm", "illus": "swirl",
      "sehir": "Şehir eklenecek", "yil": "", "ornek": True,
      "aciklama": "Galeri boşlukları ve mağaza koridorlarında swirl difüzör ve jet nozul uygulaması.",
      "urunler": ["Swirl Difüzör", "Jet Nozul", "Lineer Slot Difüzör"]},
-    {"slug": "ornek-plaza", "baslik": "Ofis Plazası Kat Uygulamaları", "sektor": "ofis", "sahne": "office",
+    {"slug": "ornek-plaza", "baslik": "Ofis Plazası Kat Uygulamaları", "sektor": "ofis", "illus": "slot",
      "sehir": "Şehir eklenecek", "yil": "", "ornek": True,
      "aciklama": "Açık ofis alanlarında lineer slot difüzör ve VAV terminal üniteleri.",
      "urunler": ["Lineer Slot Difüzör", "VAV Terminal", "Plenum Kutusu"]},
-    {"slug": "ornek-otopark", "baslik": "Kapalı Otopark Duman Tahliyesi", "sektor": "otopark", "sahne": "parking",
+    {"slug": "ornek-otopark", "baslik": "Kapalı Otopark Duman Tahliyesi", "sektor": "otopark", "illus": "fire-damper",
      "sehir": "Şehir eklenecek", "yil": "", "ornek": True,
      "aciklama": "Otopark havalandırma ve duman tahliye hatları için panjur ve damper imalatı.",
      "urunler": ["Dış Hava Panjuru", "Yangın Damperi", "Hava Ayar Damperi"]},
-    {"slug": "ornek-fabrika", "baslik": "Üretim Tesisi Havalandırması", "sektor": "endustri", "sahne": "factory",
+    {"slug": "ornek-fabrika", "baslik": "Üretim Tesisi Havalandırması", "sektor": "endustri", "illus": "sand-louver",
      "sehir": "Şehir eklenecek", "yil": "", "ornek": True,
      "aciklama": "Üretim holünde jet nozul, kum tutuculu panjur ve kanal tipi susturucu uygulaması.",
      "urunler": ["Jet Nozul", "Kum Tutuculu Panjur", "Kanal Tipi Susturucu"]},
-    {"slug": "ornek-otel", "baslik": "Butik Otel Oda ve Koridorları", "sektor": "otel", "sahne": "hotel",
+    {"slug": "ornek-otel", "baslik": "Butik Otel Oda ve Koridorları", "sektor": "otel", "illus": "linear",
      "sehir": "Şehir eklenecek", "yil": "", "ornek": True,
      "aciklama": "Oda ve koridorlarda lineer menfez, transfer menfez ve müdahale kapakları.",
      "urunler": ["Lineer Menfez", "Transfer Menfez", "Müdahale Kapağı"]},
-    {"slug": "ornek-spor-salonu", "baslik": "Kapalı Spor Salonu", "sektor": "spor", "sahne": "sports",
-     "sehir": "Şehir eklenecek", "yil": "", "ornek": True,
-     "aciklama": "Yüksek tavanlı salonda uzun atışlı jet nozul uygulaması.",
-     "urunler": ["Jet Nozul", "Dairesel Difüzör"]},
-    {"slug": "ornek-cephe", "baslik": "Konut Projesi Cephe Panjurları", "sektor": "cephe", "sahne": "facade",
-     "sehir": "Şehir eklenecek", "yil": "", "ornek": True,
-     "aciklama": "Teknik hacimlerin dış hava alış ve atış noktaları için akustik ve dış hava panjurları.",
-     "urunler": ["Dış Hava Panjuru", "Akustik Panjur"]},
 ]
 
 FOTO_UZANTI = {".jpg", ".jpeg", ".png", ".webp"}
@@ -276,7 +264,6 @@ def proje_fotolari(slug):
     if not klasor.is_dir():
         return []
     return [f"assets/img/projeler/{slug}/{f.name}" for f in sorted(klasor.iterdir()) if f.suffix.lower() in FOTO_UZANTI]
-
 
 FONT_LINK = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
              '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
@@ -330,6 +317,7 @@ def head(title, desc, path, extra_ld=None):
 
 
 
+
 CUR = ' aria-current="page"'
 
 
@@ -351,7 +339,7 @@ def header(active):
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="index.html" aria-label="{FIRMA['ad']} ana sayfa">
-      <img src="assets/img/logo-mark.svg" alt="{FIRMA['ad']} logosu" width="96" height="52">
+      <img src="assets/img/logo-mark.svg" alt="{FIRMA['ad']} logosu" width="92" height="50">
     </a>
     <button class="nav-toggle" aria-controls="nav" aria-expanded="false" aria-label="Menüyü aç">
       <span></span><span></span><span></span>
@@ -365,13 +353,11 @@ def header(active):
 <main id="icerik">"""
 
 
-def footer(dialog=False):
-    cats = "\n".join(f'        <li><a href="urunler.html#{k["id"]}">{k["ad"]}</a></li>' for k in KATEGORILER)
-    dlg = """
+PROJE_DIALOG = """
 <dialog class="proj-dialog" id="proj-dialog" aria-labelledby="pd-title">
   <div class="pd-main">
     <button class="pd-close" type="button" aria-label="Kapat">×</button>
-    <div class="pd-main-media" style="width:100%;height:100%"></div>
+    <div class="pd-main-media"></div>
     <button class="pd-nav pd-prev" type="button" aria-label="Önceki fotoğraf">‹</button>
     <button class="pd-nav pd-next" type="button" aria-label="Sonraki fotoğraf">›</button>
   </div>
@@ -382,13 +368,17 @@ def footer(dialog=False):
     <p class="pd-desc"></p>
     <div class="tags pd-tags"></div>
   </div>
-</dialog>""" if dialog else ""
+</dialog>"""
+
+
+def footer(dialog=False):
+    cats = "\n".join(f'        <li><a href="urunler.html#{k["id"]}">{k["ad"]}</a></li>' for k in KATEGORILER)
     return f"""</main>
-{dlg}
+{PROJE_DIALOG if dialog else ""}
 <footer class="site-footer">
   <div class="wrap">
     <div>
-      <img src="assets/img/logo-oguz-klima.svg" alt="{FIRMA['unvan']}" width="125" height="96">
+      <img src="assets/img/logo-oguz-klima-beyaz.svg" alt="{FIRMA['unvan']}" width="117" height="90">
       <p>Menfez, difüzör, damper ve panjur üretiminde projeye özel ölçü, hızlı teslim ve teknik destek.</p>
     </div>
     <div>
@@ -435,51 +425,45 @@ def cta_band():
     return f"""
 <section class="cta-band" aria-label="Teklif">
   <div class="wrap">
-    <div class="cta-box">
-      <div>
-        <h2>Projenizin menfez ve damper listesini gönderin.</h2>
-        <p>Metraj listenizi veya proje çizimlerinizi iletin, aynı gün içinde fiyat teklifi hazırlayalım.</p>
-      </div>
-      <div class="actions">
-        <a class="btn btn-sun" href="iletisim.html#teklif">Teklif İste {ICON['arrow']}</a>
-        <a class="btn btn-white" href="https://wa.me/{FIRMA['whatsapp']}" target="_blank" rel="noopener">WhatsApp</a>
-      </div>
+    <div>
+      <h2>Projenizin menfez ve damper listesini gönderin.</h2>
+      <p>Metraj listenizi veya proje çizimlerinizi iletin, aynı gün içinde fiyat teklifi hazırlayalım.</p>
+    </div>
+    <div class="actions">
+      <a class="btn btn-primary" href="iletisim.html#teklif">Teklif İste {ICON['arrow']}</a>
+      <a class="btn btn-ghost" href="https://wa.me/{FIRMA['whatsapp']}" target="_blank" rel="noopener">WhatsApp</a>
     </div>
   </div>
 </section>"""
 
 
-def page_hero(crumb, title, text, art_attr):
+def page_hero(crumb, title, text):
     return f"""
 <section class="page-hero">
   <div class="wrap">
-    <div>
-      <nav class="crumbs" aria-label="Sayfa yolu"><a href="index.html">Ana Sayfa</a> / {crumb}</nav>
-      <h1>{title}</h1>
-      <p>{text}</p>
-    </div>
-    <div class="ph-art bob" {art_attr}></div>
+    <nav class="crumbs" aria-label="Sayfa yolu"><a href="index.html">Ana Sayfa</a> / {crumb}</nav>
+    <h1>{title}</h1>
+    <p>{text}</p>
   </div>
 </section>"""
 
 
-def proje_kart(p, extra_cls=""):
+def proje_kart(p):
     fotolar = proje_fotolari(p["slug"])
     veri = {"baslik": p["baslik"], "sektor": SEKTOR_AD.get(p["sektor"], ""), "sehir": p.get("sehir", ""),
             "yil": p.get("yil", ""), "aciklama": p.get("aciklama", ""), "urunler": p.get("urunler", []),
-            "fotolar": fotolar, "sahne": p["sahne"]}
+            "fotolar": fotolar, "illus": p["illus"]}
     if fotolar:
-        media = f'<img src="{fotolar[0]}" alt="{escape(p["baslik"])}" loading="lazy">'
-        shots = f'<span class="shots">{ICON["camera"]} {len(fotolar)} fotoğraf</span>'
-        attr = ""
+        ph = f'<div class="ph"><img src="{fotolar[0]}" alt="{escape(p["baslik"])}" loading="lazy">'
+        shots = f'<span class="shots">{ICON["camera"]} {len(fotolar)}</span>'
     else:
-        media, shots = "", ""
-        attr = f' data-scene="{p["sahne"]}"'
-    ornek = '<span class="sample">ÖRNEK</span>' if p.get("ornek") else ""
+        ph = f'<div class="ph" data-illus="{p["illus"]}">'
+        shots = ""
+    ornek = '<span class="sample">Örnek</span>' if p.get("ornek") else ""
     meta = " · ".join(x for x in [p.get("sehir", ""), p.get("yil", "")] if x)
     return f"""
-      <button type="button" class="project{extra_cls}" data-sektor="{p['sektor']}" data-proj='{escape(json.dumps(veri, ensure_ascii=False), quote=True)}'>
-        <div class="ph"{attr}>{media}<span class="badge">{SEKTOR_AD.get(p['sektor'], '')}</span>{ornek}{shots}</div>
+      <button type="button" class="project" data-sektor="{p['sektor']}" data-proj='{escape(json.dumps(veri, ensure_ascii=False), quote=True)}'>
+        {ph}<span class="badge">{SEKTOR_AD.get(p['sektor'], '')}</span>{ornek}{shots}</div>
         <div class="info">
           <h3>{p['baslik']}</h3>
           <div class="meta"><span>{meta}</span><span>{len(p.get('urunler', []))} ürün grubu</span></div>
@@ -490,11 +474,50 @@ def proje_kart(p, extra_cls=""):
 # ---------------------------------------------------------------------------
 # ANA SAYFA
 # ---------------------------------------------------------------------------
+def hero_svg():
+    # Alüminyum menfez çizimi: kanatlar sayfa açılışında açılır, hava akışı çizgileri akar.
+    blades = []
+    for i in range(9):
+        y = 118 + i * 34
+        blades.append(
+            f'<g transform="rotate(-14 260 {y})"><rect class="blade" x="84" y="{y - 6}" width="352" height="12" rx="6" '
+            f'fill="url(#al)" stroke="#2f2483" stroke-width="1.5" style="animation-delay:{i * 60}ms"/></g>')
+    flows = []
+    for i in range(6):
+        y = 150 + i * 46
+        flows.append(f'<path class="flow" d="M440 {y} C 480 {y - 40}, 520 {y - 60}, 560 {y - 90}" '
+                     f'stroke="#009ee3" stroke-width="2.5" fill="none" style="animation-delay:{i * 120}ms"/>')
+    return f"""<svg viewBox="0 0 560 500" role="img" aria-label="Kanatlı menfez teknik çizimi">
+        <defs>
+          <linearGradient id="fr" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe5ef"/>
+          </linearGradient>
+          <linearGradient id="al" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c9d2e3"/>
+          </linearGradient>
+          <clipPath id="inner"><rect x="80" y="100" width="360" height="300"/></clipPath>
+        </defs>
+        <rect x="66" y="88" width="400" height="340" rx="6" fill="rgba(47,36,131,.08)"/>
+        <rect x="60" y="80" width="400" height="340" rx="6" fill="url(#fr)" stroke="#2f2483" stroke-width="2"/>
+        <rect x="80" y="100" width="360" height="300" rx="2" fill="#e6ebf4" stroke="#2f2483" stroke-opacity=".4"/>
+        <g clip-path="url(#inner)">{''.join(blades)}</g>
+        {''.join(flows)}
+        <g stroke="#8a90ab" stroke-width="1" fill="none">
+          <path d="M60 450v14M460 450v14M60 457h170M290 457h170"/>
+          <path d="M20 80h14M20 420h14M27 80v145M27 275v145"/>
+        </g>
+        <g fill="#5d6078" font-family="IBM Plex Mono, monospace" font-size="13">
+          <text x="260" y="462" text-anchor="middle">B = 400</text>
+          <text x="27" y="254" text-anchor="middle" transform="rotate(-90 27 250)">H = 340</text>
+        </g>
+      </svg>"""
+
+
 def index():
     cats = []
     for k in KATEGORILER:
         cats.append(f"""
-      <a class="cat {TON.get(k['id'], '')}" href="urunler.html#{k['id']}">
+      <a class="cat" href="urunler.html#{k['id']}">
         <div class="illus" data-illus="{k['illus']}"><span class="count">{len(k['urunler'])} ÜRÜN</span></div>
         <div class="body">
           <h3>{k['ad']}</h3>
@@ -503,15 +526,8 @@ def index():
         </div>
       </a>""")
     sectors = "".join(f"""
-      <article class="scene-card">
-        <div class="scene" data-scene="{sahne}"></div>
-        <div class="body">
-          <h3>{ad}</h3>
-          <p>{acik}</p>
-          <div class="tags">{''.join(f'<span class="tag">{t}</span>' for t in tags)}</div>
-        </div>
-      </article>""" for _, ad, sahne, acik, tags in SEKTOR)
-    projs = "".join(proje_kart(p) for p in PROJELER[:6])
+      <div class="sector">{svg}<h3>{t}</h3><p>{d}</p></div>""" for _, t, d, svg in SEKTOR)
+    projs = "".join(proje_kart(p) for p in PROJELER[:3])
 
     ld_extra = [{
         "@context": "https://schema.org", "@type": "WebSite", "name": FIRMA["ad"], "url": FIRMA["domain"],
@@ -527,20 +543,24 @@ def index():
   <div class="wrap">
     <div>
       <span class="eyebrow">Havalandırma ekipmanları üretimi</span>
-      <h1 id="hero-baslik">Temiz hava, <span class="hl">doğru yönde</span> aksın.</h1>
+      <h1 id="hero-baslik">Menfezden dampere,<br>havanın <em>yönünü</em> biz çiziyoruz.</h1>
       <p class="lead">Menfez, difüzör, damper, panjur ve müdahale kapaklarını projenizin ölçüsüne göre üretiyoruz.
-        Hastaneden otoparka, ofisten fabrikaya kadar tüm havalandırma projeleriniz için tek tedarikçi.</p>
+        Hastaneden otoparka, ofisten fabrikaya kadar tüm havalandırma projeleri için tek tedarikçi.</p>
       <div class="actions">
         <a class="btn btn-primary" href="urunler.html">Ürünleri İncele {ICON['arrow']}</a>
-        <a class="btn btn-outline" href="projeler.html">Projelerimiz</a>
+        <a class="btn btn-line" href="projeler.html">Projelerimiz</a>
       </div>
-      <div class="chips">
-        <span class="chip c1"><i>{ICON['box']}</i><span><b>{len(TUM_URUNLER)}+</b> ürün tipi</span></span>
-        <span class="chip c2"><i>{ICON['ruler']}</i><span><b>%100</b> ölçüye özel</span></span>
-        <span class="chip c3"><i>{ICON['star']}</i><span><b>{len(PROJELER)}+</b> proje</span></span>
+      <div class="hero-stats">
+        <div><b>{len(KATEGORILER)}</b><span>ürün grubu</span></div>
+        <div><b>{len(TUM_URUNLER)}+</b><span>ürün tipi</span></div>
+        <div><b>%100</b><span>ölçüye özel üretim</span></div>
       </div>
     </div>
-    <div class="hero-visual" data-hero role="img" aria-label="Bina kesiti: ofis, hastane, mağaza, otel ve otoparkta havalandırma ürünleri"></div>
+    <div class="hero-visual">
+      {hero_svg()}
+      <span class="hero-tag" style="left:2%;top:6%">OK-TSK · TEK SIRA KANATLI</span>
+      <span class="hero-tag" style="right:0;bottom:30%">Kanat açısı 0–45°</span>
+    </div>
   </div>
 </section>
 
@@ -558,23 +578,14 @@ def index():
   </div>
 </section>
 
-<div class="stats-band" aria-label="Rakamlarla Oğuz Klima">
+<section class="alt" aria-labelledby="sektor-baslik">
   <div class="wrap">
-    <div><b>{len(KATEGORILER)}</b><span>ürün grubu</span></div>
-    <div><b>{len(TUM_URUNLER)}+</b><span>ürün tipi</span></div>
-    <div><b>RAL</b><span>tüm renklerde toz boya</span></div>
-    <div><b>81 il</b><span>Türkiye geneline sevkiyat</span></div>
-  </div>
-</div>
-
-<section class="tint" aria-labelledby="sektor-baslik">
-  <div class="wrap">
-    <div class="section-head center">
+    <div class="section-head">
       <span class="eyebrow">Uygulama alanları</span>
       <h2 id="sektor-baslik">Hangi projede, hangi ürün?</h2>
-      <p>Her yapının hava dağıtımı ve güvenlik ihtiyacı farklıdır. Proje ekiplerine doğru ürün seçiminde teknik destek veriyoruz.</p>
+      <p>Her yapı tipinin hava dağıtımı ve güvenlik ihtiyacı farklıdır. Proje ekiplerine doğru ürün seçiminde teknik destek veriyoruz.</p>
     </div>
-    <div class="scene-grid">{sectors}
+    <div class="sectors">{sectors}
     </div>
   </div>
 </section>
@@ -584,7 +595,7 @@ def index():
     <div class="section-head row">
       <div style="display:grid;gap:14px">
         <span class="eyebrow">Projelerimiz</span>
-        <h2 id="proje-baslik">Ürünlerimizin çalıştığı yerler</h2>
+        <h2 id="proje-baslik">Ürünlerimizin kullanıldığı projeler</h2>
       </div>
       <a class="btn btn-outline" href="projeler.html">Tüm projeler</a>
     </div>
@@ -593,26 +604,26 @@ def index():
   </div>
 </section>
 
-<section class="tint-warm" aria-labelledby="neden-baslik">
+<section class="alt" aria-labelledby="neden-baslik">
   <div class="wrap why">
     <div>
       <span class="eyebrow">Neden Oğuz Klima</span>
-      <h2 id="neden-baslik" style="font-size:clamp(30px,3.8vw,46px);font-weight:800;margin-top:14px;color:var(--navy)">Şartnameye uygun ürün, söz verilen tarihte şantiyede.</h2>
+      <h2 id="neden-baslik" style="font-size:clamp(30px,3.8vw,46px);font-weight:800;margin-top:14px">Şartnameye uygun ürün, söz verilen tarihte şantiyede.</h2>
       <div class="why-list">
-        <div class="why-item"><div class="ic">{ICON['ruler']}</div><h3>Ölçüye özel üretim</h3><p>Standart dışı menfez, difüzör ve damperleri projenize göre imal ediyoruz.</p></div>
-        <div class="why-item"><div class="ic">{ICON['factory']}</div><h3>Kendi üretimimiz</h3><p>Kesimden boyaya tüm aşamalar kontrolümüzde; kalite ve termin tek elde.</p></div>
-        <div class="why-item"><div class="ic">{ICON['truck']}</div><h3>Hızlı teslimat</h3><p>Stoklu ürünlerde hızlı sevkiyat, projelerde iş programınıza uygun teslim.</p></div>
-        <div class="why-item"><div class="ic">{ICON['shield']}</div><h3>Teknik destek</h3><p>Ürün seçimi, debi ve ölçü hesabında proje ekibinizle birlikte çalışıyoruz.</p></div>
+        <div class="why-item"><div class="ic">{ICON['ruler']}</div><div><h3>Ölçüye özel üretim</h3><p>Standart ölçülerin dışındaki menfez, difüzör ve damperleri projenize göre imal ediyoruz.</p></div></div>
+        <div class="why-item"><div class="ic">{ICON['factory']}</div><div><h3>Kendi üretim tesisimiz</h3><p>Kesimden boyaya kadar tüm aşamalar kontrolümüzde; kalite ve termin tek elden yönetilir.</p></div></div>
+        <div class="why-item"><div class="ic">{ICON['truck']}</div><div><h3>Hızlı teslimat</h3><p>Stoklu ürünlerde hızlı sevkiyat, proje siparişlerinde iş programınıza uygun parçalı teslim.</p></div></div>
+        <div class="why-item"><div class="ic">{ICON['shield']}</div><div><h3>Teknik destek</h3><p>Ürün seçimi, debi ve ölçü hesabında mekanik proje ekiplerinizle birlikte çalışıyoruz.</p></div></div>
       </div>
     </div>
     <div class="spec-sheet" aria-label="Örnek ürün teknik föyü">
-      <div class="sheet-head"><span>TEKNİK FÖY</span><span>OK-SWR</span></div>
-      <div class="sheet-draw" data-illus="swirl"></div>
+      <div class="sheet-head"><span>TEKNİK FÖY</span><span>OK-KTD</span></div>
+      <div class="sheet-draw" data-illus="diffuser-square"></div>
       <table class="spec-table">
-        <tr><th>Ürün</th><td>Swirl (Girdaplı) Difüzör</td></tr>
-        <tr><th>Malzeme</th><td>Çelik / alüminyum</td></tr>
-        <tr><th>Ölçü</th><td>Ø400 – Ø800 mm</td></tr>
-        <tr><th>Tavan yüksekliği</th><td>3 – 6 m</td></tr>
+        <tr><th>Ürün</th><td>Kare Tavan Difüzörü</td></tr>
+        <tr><th>Malzeme</th><td>Alüminyum profil</td></tr>
+        <tr><th>Modül ölçüsü</th><td>600×600 / 625×625 mm</td></tr>
+        <tr><th>Boyun ölçüsü</th><td>150 – 600 mm</td></tr>
         <tr><th>Yüzey</th><td>Elektrostatik toz boya, RAL 9010</td></tr>
         <tr><th>Opsiyon</th><td>Damper, plenum kutusu</td></tr>
       </table>
@@ -653,7 +664,6 @@ def urunler():
         blocks.append(f"""
   <section class="cat-block" id="{k['id']}" aria-labelledby="h-{k['id']}">
     <header>
-      <div class="cat-ic" data-illus="{k['illus']}"></div>
       <h2 id="h-{k['id']}">{k['ad']}</h2>
       <span class="code">{len(k['urunler'])} ürün tipi</span>
       <p>{k['aciklama']}</p>
@@ -674,8 +684,7 @@ def urunler():
         "dış hava panjuru, müdahale kapağı ve susturucu modelleri.",
         "urunler.html", ld) + header("urunler.html") + page_hero(
         "Ürünler", "Ürün Kataloğu",
-        f"{len(KATEGORILER)} ürün grubunda {len(TUM_URUNLER)} ürün tipi. Tüm ürünler proje ölçünüze göre üretilir; ölçü aralıkları tipik değerlerdir.",
-        'data-illus="grille-double"') + f"""
+        f"{len(KATEGORILER)} ürün grubunda {len(TUM_URUNLER)} ürün tipi. Tüm ürünler proje ölçünüze göre üretilir; ölçü aralıkları tipik değerlerdir.") + f"""
 <div class="wrap" style="padding-block:24px 0">
   <nav class="filter" aria-label="Ürün grupları">
 {filt}
@@ -705,8 +714,7 @@ def projeler():
         "Oğuz Klima menfez, difüzör, damper ve panjurlarının kullanıldığı hastane, AVM, ofis, otopark, fabrika ve otel projeleri.",
         "projeler.html", ld) + header("projeler.html") + page_hero(
         "Projeler", "Projelerimiz",
-        "Ürünlerimizin kullanıldığı projelerden seçkiler. Detay ve fotoğraflar için bir projeye tıklayın.",
-        'data-scene="facade" style="border-radius:20px;overflow:hidden"') + f"""
+        "Ürünlerimizin kullanıldığı projelerden seçkiler. Detay ve fotoğraflar için bir projeye tıklayın.") + f"""
 <section style="padding-top:40px">
   <div class="wrap">
     <div class="proj-filter" role="group" aria-label="Sektöre göre filtrele">{btns}</div>
@@ -727,13 +735,12 @@ def hakkimizda():
         "Oğuz Klima Havalandırma İnşaat San. ve Tic. Ltd. Şti. hakkında: üretim sürecimiz, kalite anlayışımız ve hizmet verdiğimiz sektörler.",
         "hakkimizda.html") + header("hakkimizda.html") + page_hero(
         "Hakkımızda", "Hakkımızda",
-        "Havalandırma sistemlerinin görünen yüzü olan menfez ve difüzörlerden, kanal içindeki damper ve susturuculara kadar üretim yapıyoruz.",
-        'data-scene="factory" style="border-radius:20px;overflow:hidden"') + f"""
+        "Havalandırma sistemlerinin görünen yüzü olan menfez ve difüzörlerden, kanal içindeki damper ve susturuculara kadar üretim yapıyoruz.") + f"""
 <section>
   <div class="wrap about-grid">
     <div class="prose">
       <span class="eyebrow">Biz kimiz</span>
-      <h2 style="font-size:clamp(28px,3.4vw,42px);font-weight:800;color:var(--navy)">Proje ekiplerinin güvendiği havalandırma ekipmanı tedarikçisi</h2>
+      <h2 style="font-size:clamp(28px,3.4vw,42px);font-weight:800">Proje ekiplerinin güvendiği havalandırma ekipmanı tedarikçisi</h2>
       <p>{FIRMA['unvan']}, havalandırma ve iklimlendirme sistemleri için hava dağıtım ve kontrol ekipmanları üretir.
         Menfez, difüzör, damper, panjur, müdahale kapağı ve susturucu ürün gruplarımızla mekanik taahhüt firmalarına,
         proje ofislerine ve yatırımcılara hizmet veriyoruz.</p>
@@ -745,12 +752,12 @@ def hakkimizda():
       <div><b>{len(KATEGORILER)}</b><span>ürün grubu</span></div>
       <div><b>{len(TUM_URUNLER)}+</b><span>ürün tipi</span></div>
       <div><b>RAL</b><span>tüm renklerde toz boya seçeneği</span></div>
-      <div><b>81 il</b><span>Türkiye geneline sevkiyat</span></div>
+      <div><b>TR</b><span>Türkiye geneline sevkiyat</span></div>
     </div>
   </div>
 </section>
 
-<section class="tint" id="uretim" aria-labelledby="uretim-baslik">
+<section class="alt" id="uretim" aria-labelledby="uretim-baslik">
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Üretim süreci</span>
@@ -794,9 +801,8 @@ def iletisim():
         "Menfez, difüzör, damper ve panjur siparişleriniz için Oğuz Klima ile iletişime geçin. Teklif formu, telefon ve WhatsApp.",
         "iletisim.html") + header("iletisim.html") + page_hero(
         "İletişim", "İletişim & Teklif",
-        "Metraj listenizi, proje çiziminizi veya ürün sorunuzu iletin; en kısa sürede dönüş yapalım.",
-        'data-scene="office" style="border-radius:20px;overflow:hidden"') + f"""
-<section style="padding-top:40px">
+        "Metraj listenizi, proje çiziminizi veya ürün sorunuzu iletin; en kısa sürede dönüş yapalım.") + f"""
+<section>
   <div class="wrap">
     <div class="contact-grid">
       <div class="contact-cards">
@@ -830,9 +836,9 @@ def iletisim():
 """ + footer()
 
 
-FAVICON = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#009ee3"/>
+FAVICON = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#2f2483"/>
 <g stroke="#fff" stroke-width="5" stroke-linecap="round"><path d="M14 20l36-6M14 32l36-6M14 44l36-6"/></g>
-<path d="M14 54h36" stroke="#ffb81c" stroke-width="5" stroke-linecap="round"/></svg>
+<path d="M14 54h36" stroke="#009ee3" stroke-width="5" stroke-linecap="round"/></svg>
 """
 
 

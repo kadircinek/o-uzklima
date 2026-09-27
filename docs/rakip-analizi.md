@@ -37,9 +37,11 @@
 
 ## 3. Bu sürümde yapılanlar
 
-- **Aydınlık tasarım:** beyaz ve gökyüzü mavisi zemin; logonun lacivert ve camgöbeğine ek olarak nane yeşili, güneş sarısı, mercan ve lila vurgu renkleri.
-- **Bol görsel:** ana sayfada hareketli bina kesiti (çatıda klima santrali; ofis, hastane, AVM ve otel katları; bodrumda otopark), 6 uygulama alanı sahnesi, renkli ürün kartları ve çizimleri.
-- **Projeler sayfası:** sektöre göre filtre, tıklanınca açılan detay penceresi ve fotoğraf galerisi. Ana sayfada da 6 proje gösteriliyor.
+- **Tasarım:** İlk sürümün teknik ve kurumsal dili, aydınlık zeminle: beyaz / açık gri zemin, hafif teknik çizim ızgarası,
+  logonun lacivert ve camgöbeği renkleri. Koyu renk yalnızca teklif bandında ve alt bilgide kullanılıyor.
+- **Görseller:** Hareketli alüminyum menfez çizimi (ana sayfa), her ürün için teknik çizim, teknik föy kartı.
+- **Projeler sayfası:** Sektöre göre filtre, tıklanınca açılan detay penceresi ve fotoğraf galerisi. Ana sayfada 3 proje gösteriliyor.
+  Fotoğraf yoksa projede kullanılan ana ürünün teknik çizimi görünür.
 - SEO: her sayfada özgün başlık ve açıklama, yapılandırılmış veri, `sitemap.xml`.
 
 ## 4. Projelerinizi ekleme
