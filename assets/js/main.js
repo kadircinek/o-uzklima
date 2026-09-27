@@ -2,6 +2,7 @@
    - Mobil menü
    - Ürün çizimleri: data-illus="tip" olan her öğeye teknik çizim tarzında SVG basar.
      Gerçek ürün fotoğrafları geldiğinde <div class="illus"> içine <img> koymanız yeterli.
+   - Ana sayfa slayt gösterisi
    - Proje filtresi ve fotoğraf galerisi
    - Teklif formu
 */
@@ -254,6 +255,55 @@
     var fn = D[el.getAttribute("data-illus")];
     if (fn && !el.querySelector("img, svg")) el.insertAdjacentHTML("beforeend", svg(fn()));
   });
+
+  /* ---------- Ana sayfa slayt gösterisi ---------- */
+  var slider = document.querySelector(".slider");
+  if (slider) {
+    var slides = slider.querySelectorAll(".slide");
+    var dots = slider.querySelectorAll(".dot");
+    var bar = slider.querySelector(".sl-progress span");
+    var cur = 0, timer = null, SURE = 6500;
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var go = function (n) {
+      slides[cur].classList.remove("is-active");
+      slides[cur].setAttribute("aria-hidden", "true");
+      dots[cur].removeAttribute("aria-current");
+      cur = (n + slides.length) % slides.length;
+      slides[cur].classList.add("is-active");
+      slides[cur].removeAttribute("aria-hidden");
+      dots[cur].setAttribute("aria-current", "true");
+      slider.classList.toggle("dark-ui", slides[cur].classList.contains("has-photo"));
+      restart();
+    };
+    var restart = function () {
+      clearTimeout(timer);
+      if (bar) { bar.style.transition = "none"; bar.style.width = "0"; }
+      if (reduce || slider.matches(":hover") || slider.contains(document.activeElement)) return;
+      if (bar) { void bar.offsetWidth; bar.style.transition = "width " + SURE + "ms linear"; bar.style.width = "100%"; }
+      timer = setTimeout(function () { go(cur + 1); }, SURE);
+    };
+    slider.querySelector(".sl-next").addEventListener("click", function () { go(cur + 1); });
+    slider.querySelector(".sl-prev").addEventListener("click", function () { go(cur - 1); });
+    dots.forEach(function (d, i) { d.addEventListener("click", function () { go(i); }); });
+    slider.addEventListener("mouseenter", restart);
+    slider.addEventListener("mouseleave", restart);
+    slider.addEventListener("focusin", restart);
+    slider.addEventListener("focusout", function () { setTimeout(restart, 0); });
+    slider.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") go(cur + 1);
+      if (e.key === "ArrowLeft") go(cur - 1);
+    });
+    var x0 = null;
+    slider.addEventListener("pointerdown", function (e) { x0 = e.clientX; });
+    slider.addEventListener("pointerup", function (e) {
+      if (x0 === null) return;
+      var dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 50) go(dx < 0 ? cur + 1 : cur - 1);
+    });
+    document.addEventListener("visibilitychange", function () { if (document.hidden) clearTimeout(timer); else restart(); });
+    slider.classList.toggle("dark-ui", slides[0].classList.contains("has-photo"));
+    restart();
+  }
 
   /* ---------- Projeler: filtre ---------- */
   var pf = document.querySelector(".proj-filter");

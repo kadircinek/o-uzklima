@@ -44,7 +44,17 @@
   Fotoğraf yoksa projede kullanılan ana ürünün teknik çizimi görünür.
 - SEO: her sayfada özgün başlık ve açıklama, yapılandırılmış veri, `sitemap.xml`.
 
-## 4. Projelerinizi ekleme
+## 4. Ana sayfa slayt fotoğrafları
+
+Slayt gösterisi 4 slayttan oluşur. Fotoğraflar `assets/img/slider/` klasörüne şu adlarla konur:
+`01-menfez.jpg`, `02-kanal.jpg`, `03-difuzor.jpg`, `04-proje.jpg`. Fotoğraf olmayan slaytta ürünün teknik çizimi görünür.
+
+- Yatay, en az 1920×900 px, JPG veya WebP, dosya başına 400 KB altı.
+- En iyisi kendi ürün, atölye ve şantiye fotoğraflarınız. Rakip sitelerden alınan fotoğraflar telif hakkı nedeniyle kullanılmamalı.
+- Ücretsiz ve ticari kullanıma izin veren kaynaklar: Unsplash, Pexels, Pixabay
+  (arama: "ventilation duct", "air vent grille", "hvac ductwork", "ceiling diffuser", "air conditioning duct").
+
+## 5. Projelerinizi ekleme
 
 1. `tools/build.py` içindeki `PROJELER` listesinde örnek kayıtları gerçek projelerinizle değiştirin (başlık, sektör, şehir, yıl, açıklama, kullanılan ürünler). `"ornek": True` satırını silin.
 2. Her proje için `assets/img/projeler/<slug>/` klasörü açıp fotoğrafları `01.jpg`, `02.jpg`… adıyla koyun.
@@ -52,7 +62,7 @@
 
 Bana fotoğrafları ve proje bilgilerini gönderirseniz bunu ben de yapabilirim.
 
-## 5. Hedef anahtar kelimeler
+## 6. Hedef anahtar kelimeler
 
 | Öncelik | Anahtar kelime | Hedef sayfa |
 |---|---|---|
@@ -63,7 +73,7 @@ Bana fotoğrafları ve proje bilgilerini gönderirseniz bunu ben de yapabilirim.
 | Orta | müdahale kapağı, jet nozul, VAV damper, susturucu | ilgili ürün sayfaları |
 | Yerel | "menfez imalatı + şehir", "havalandırma ekipmanları + şehir" | Ana sayfa + Google İşletme Profili |
 
-## 6. Sonraki adımlar
+## 7. Sonraki adımlar
 
 1. Firma bilgileri (telefon, WhatsApp, e-posta, adres, alan adı, kuruluş yılı) → `tools/build.py` → `FIRMA`.
 2. Gerçek proje bilgileri ve fotoğrafları.

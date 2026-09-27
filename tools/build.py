@@ -256,6 +256,32 @@ PROJELER = [
      "urunler": ["Lineer Menfez", "Transfer Menfez", "Müdahale Kapağı"]},
 ]
 
+# ---------------------------------------------------------------------------
+# ANA SAYFA SLAYT GÖSTERİSİ
+#
+# Fotoğrafları  assets/img/slider/  klasörüne "foto" alanındaki adla koyun (ör. 01-menfez.jpg).
+# Önerilen ölçü: yatay, en az 1920×900 px, JPG/WebP, 400 KB altı.
+# Fotoğraf yoksa slaytta ürünün teknik çizimi gösterilir.
+# ---------------------------------------------------------------------------
+SLAYTLAR = [
+    {"foto": "01-menfez.jpg", "illus": "grille-double", "etiket": "Menfez imalatı",
+     "baslik": "Menfezden dampere,<br>havanın <em>yönünü</em> biz çiziyoruz.",
+     "metin": "Tek ve çift sıra kanatlı, lineer ve transfer menfezler; projenizin ölçüsüne göre alüminyumdan üretilir.",
+     "buton": ("Menfezleri incele", "urunler.html#menfezler")},
+    {"foto": "02-kanal.jpg", "illus": "duct", "etiket": "Kanal sistemleri",
+     "baslik": "Havalandırma kanalınıza <em>tam uyumlu</em> ekipman.",
+     "metin": "Damper, susturucu, plenum ve müdahale kapaklarıyla kanal hattının her noktası için çözüm.",
+     "buton": ("Damperleri incele", "urunler.html#damperler")},
+    {"foto": "03-difuzor.jpg", "illus": "diffuser-square", "etiket": "Difüzörler",
+     "baslik": "Asma tavanlarda <em>homojen</em> hava dağılımı.",
+     "metin": "Kare, dairesel, perfore, swirl ve lineer slot difüzörler; RAL renk seçenekleriyle.",
+     "buton": ("Difüzörleri incele", "urunler.html#difuzorler")},
+    {"foto": "04-proje.jpg", "illus": "louver", "etiket": "Projelerimiz",
+     "baslik": "Hastaneden AVM'ye, <em>şantiyede</em> test edilmiş ürünler.",
+     "metin": "Ürünlerimizin kullanıldığı hastane, AVM, ofis, otopark ve endüstri projelerini inceleyin.",
+     "buton": ("Projeleri gör", "projeler.html")},
+]
+
 FOTO_UZANTI = {".jpg", ".jpeg", ".png", ".webp"}
 
 
@@ -513,6 +539,65 @@ def hero_svg():
       </svg>"""
 
 
+AKTIF_NOKTA = ' aria-current="true"'
+
+
+def slider():
+    slaytlar = []
+    noktalar = []
+    for i, sl in enumerate(SLAYTLAR):
+        foto = ROOT / "assets/img/slider" / sl["foto"]
+        aktif = " is-active" if i == 0 else ""
+        gizli = "" if i == 0 else ' aria-hidden="true"'
+        if foto.exists():
+            yukle = 'fetchpriority="high"' if i == 0 else 'loading="lazy"'
+            medya = f'<img class="slide-img" src="assets/img/slider/{sl["foto"]}" alt="{escape(sl["etiket"])}" {yukle}>'
+            cls = "slide has-photo"
+        elif i == 0:
+            medya = f'<div class="slide-art hero-visual">{hero_svg()}</div>'
+            cls = "slide"
+        else:
+            medya = f'<div class="slide-art" data-illus="{sl["illus"]}"></div>'
+            cls = "slide"
+        baslik_tag = "h1" if i == 0 else "h2"
+        slaytlar.append(f"""
+      <div class="{cls}{aktif}" role="group" aria-roledescription="slayt" aria-label="{i + 1} / {len(SLAYTLAR)}"{gizli}>
+        {medya}
+        <div class="wrap slide-text">
+          <span class="eyebrow">{sl['etiket']}</span>
+          <{baslik_tag} class="slide-title">{sl['baslik']}</{baslik_tag}>
+          <p class="lead">{sl['metin']}</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="{sl['buton'][1]}">{sl['buton'][0]} {ICON['arrow']}</a>
+            <a class="btn btn-line" href="iletisim.html#teklif">Teklif İste</a>
+          </div>
+        </div>
+      </div>""")
+        noktalar.append(f'<button type="button" class="dot{aktif}" aria-label="{i + 1}. slayt"'
+                        f'{AKTIF_NOKTA if i == 0 else ""}></button>')
+    return f"""<section class="slider" aria-roledescription="slayt gösterisi" aria-label="Öne çıkanlar">
+  <div class="slides">{''.join(slaytlar)}
+  </div>
+  <div class="slider-ui wrap">
+    <div class="dots">{''.join(noktalar)}</div>
+    <div class="arrows">
+      <button type="button" class="sl-prev" aria-label="Önceki slayt">‹</button>
+      <button type="button" class="sl-next" aria-label="Sonraki slayt">›</button>
+    </div>
+  </div>
+  <div class="sl-progress"><span></span></div>
+</section>
+
+<div class="stat-strip">
+  <div class="wrap">
+    <div><b>{len(KATEGORILER)}</b><span>ürün grubu</span></div>
+    <div><b>{len(TUM_URUNLER)}+</b><span>ürün tipi</span></div>
+    <div><b>%100</b><span>ölçüye özel üretim</span></div>
+    <div><b>RAL</b><span>tüm renklerde toz boya</span></div>
+  </div>
+</div>"""
+
+
 def index():
     cats = []
     for k in KATEGORILER:
@@ -539,30 +624,7 @@ def index():
         "Projeye özel ölçü, hızlı teslim. Hemen teklif alın.",
         "index.html", ld_extra) + header("index.html") + f"""
 
-<section class="hero" aria-labelledby="hero-baslik">
-  <div class="wrap">
-    <div>
-      <span class="eyebrow">Havalandırma ekipmanları üretimi</span>
-      <h1 id="hero-baslik">Menfezden dampere,<br>havanın <em>yönünü</em> biz çiziyoruz.</h1>
-      <p class="lead">Menfez, difüzör, damper, panjur ve müdahale kapaklarını projenizin ölçüsüne göre üretiyoruz.
-        Hastaneden otoparka, ofisten fabrikaya kadar tüm havalandırma projeleri için tek tedarikçi.</p>
-      <div class="actions">
-        <a class="btn btn-primary" href="urunler.html">Ürünleri İncele {ICON['arrow']}</a>
-        <a class="btn btn-line" href="projeler.html">Projelerimiz</a>
-      </div>
-      <div class="hero-stats">
-        <div><b>{len(KATEGORILER)}</b><span>ürün grubu</span></div>
-        <div><b>{len(TUM_URUNLER)}+</b><span>ürün tipi</span></div>
-        <div><b>%100</b><span>ölçüye özel üretim</span></div>
-      </div>
-    </div>
-    <div class="hero-visual">
-      {hero_svg()}
-      <span class="hero-tag" style="left:2%;top:6%">OK-TSK · TEK SIRA KANATLI</span>
-      <span class="hero-tag" style="right:0;bottom:30%">Kanat açısı 0–45°</span>
-    </div>
-  </div>
-</section>
+{slider()}
 
 <section id="urun-gruplari" aria-labelledby="urun-baslik">
   <div class="wrap">
@@ -849,6 +911,7 @@ def main():
         (ROOT / name).write_text(html, encoding="utf-8")
     (ROOT / "assets/img/favicon.svg").write_text(FAVICON, encoding="utf-8")
     (ROOT / "assets/img/projeler").mkdir(parents=True, exist_ok=True)
+    (ROOT / "assets/img/slider").mkdir(parents=True, exist_ok=True)
 
     urls = "\n".join(
         f"  <url><loc>{FIRMA['domain']}/{'' if p == 'index.html' else p}</loc><changefreq>monthly</changefreq>"
