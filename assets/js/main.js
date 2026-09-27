@@ -425,21 +425,39 @@
       data.append("_captcha", "false");
       data.append("Sayfa", location.href);
 
+      // Başarısız olursa kullanılacak hazır metin (WhatsApp / e-posta)
+      var satirlar = [];
+      data.forEach(function (v, k) { if (k.charAt(0) !== "_" && k !== "Sayfa" && String(v).trim()) satirlar.push(k + ": " + v); });
+      var ozet = "Teklif talebi\n" + satirlar.join("\n");
+      var wa = document.querySelector(".wa");
+      var waNo = wa ? (wa.href.match(/wa\.me\/(\d+)/) || [])[1] : "";
+      var eposta = form.getAttribute("data-endpoint").split("/").pop();
+      var yedek = '<span class="alt-actions">' +
+        (waNo ? '<a class="btn btn-primary" target="_blank" rel="noopener" href="https://wa.me/' + waNo + "?text=" + encodeURIComponent(ozet) + '">WhatsApp ile gönder</a>' : "") +
+        '<a class="btn btn-line" href="mailto:' + eposta + "?subject=" + encodeURIComponent("Teklif talebi – " + urun) +
+        "&body=" + encodeURIComponent(ozet) + '">E-posta ile gönder</a></span>';
+
       btn.disabled = true;
       btn.textContent = "Gönderiliyor…";
       fetch(form.getAttribute("data-endpoint"), { method: "POST", body: data, headers: { Accept: "application/json" } })
-        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
-        .then(function (res) {
-          if (!res.ok || String(res.j.success) !== "true") throw new Error(res.j.message || "Gönderilemedi");
-          form.reset();
-          secUrun(form, urun);
-          goster("<strong>Teşekkürler, talebiniz bize ulaştı.</strong> En kısa sürede size dönüş yapacağız.");
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          var mesaj = String(j.message || "");
+          if (String(j.success) === "true") {
+            form.reset();
+            secUrun(form, urun);
+            goster("<strong>Teşekkürler, talebiniz bize ulaştı.</strong> En kısa sürede size dönüş yapacağız.");
+          } else if (/activat/i.test(mesaj)) {
+            // FormSubmit: form henüz onaylanmadı (ilk gönderim). Onay e-postası info@ adresine gitti.
+            goster("<strong>Form henüz etkinleştirilmedi.</strong> " + eposta +
+              " adresine gelen “Activate Form” e-postasındaki bağlantıya tıklandığında formlar çalışmaya başlar. " +
+              "Bu talebi şimdilik aşağıdan iletebilirsiniz." + yedek, true);
+          } else {
+            throw new Error(mesaj);
+          }
         })
         .catch(function () {
-          var wa = document.querySelector(".wa");
-          goster("Talebiniz şu anda gönderilemedi. Lütfen bizi arayın, " +
-            '<a href="' + (wa ? wa.href : "#") + '" target="_blank" rel="noopener">WhatsApp</a> ile yazın veya ' +
-            '<a href="mailto:info@oguzklima.com">info@oguzklima.com</a> adresine e-posta gönderin.', true);
+          goster("Talebiniz otomatik gönderilemedi. Bilgileriniz hazır; tek tıkla iletebilirsiniz:" + yedek, true);
         })
         .then(function () { btn.disabled = false; btn.innerHTML = btnText; });
     });

@@ -808,6 +808,9 @@ dialog.quote-dialog .pd-close { position: absolute; top: 14px; right: 14px; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .form .status.is-error { background: #fdecea; color: #8a1c10; }
 .form .note a, .form .status a { color: var(--cyan); }
+.form .status .alt-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.form .status .alt-actions .btn { padding: 11px 16px; font-size: 14px; }
+.form .status .alt-actions .btn-primary { color: #fff; }
 .form button[disabled] { opacity: .7; cursor: wait; }
 .form-anchor { scroll-margin-top: 110px; }
 .contact-card .more-link { color: var(--cyan); font-weight: 500; font-size: 14px; }
