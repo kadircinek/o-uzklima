@@ -266,8 +266,12 @@ PROJELER = [
 # ---------------------------------------------------------------------------
 SLAYTLAR = [
     # "odak": fotoğrafın hangi kısmının görüneceği — (masaüstü, mobil) CSS object-position değerleri
-    {"foto": "01-menfez.jpg", "illus": "grille-double", "etiket": "Menfez imalatı", "odak": ("center 72%", "42% center"),
+    {"foto": "00-urunler.jpg", "illus": "grille-double", "etiket": "Havalandırma ekipmanları üretimi", "odak": ("center 60%", "62% center"),
      "baslik": "Menfezden dampere,<br>havanın <em>yönünü</em> biz çiziyoruz.",
+     "metin": "Menfez, difüzör, panjur ve damperleri projenizin ölçüsüne göre üretiyoruz. Hastaneden fabrikaya tek tedarikçi.",
+     "buton": ("Ürünleri incele", "urunler.html")},
+    {"foto": "01-menfez.jpg", "illus": "grille-double", "etiket": "Menfez imalatı", "odak": ("center 72%", "42% center"),
+     "baslik": "Kanal üzeri ve duvar tipi menfezler, <em>ölçüye özel</em>.",
      "metin": "Tek ve çift sıra kanatlı, lineer ve transfer menfezler; projenizin ölçüsüne göre alüminyumdan üretilir.",
      "buton": ("Menfezleri incele", "urunler.html#menfezler")},
     {"foto": "02-kanal.jpg", "illus": "duct", "etiket": "Kanal sistemleri", "odak": ("center", "68% center"),
