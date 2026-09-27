@@ -260,26 +260,32 @@ PROJELER = [
 # ANA SAYFA SLAYT GÖSTERİSİ
 #
 # Fotoğrafları  assets/img/slider/  klasörüne "foto" alanındaki adla koyun (ör. 01-menfez.jpg).
+# Yeni slayt eklemek için listeye bir kayıt daha ekleyin.
 # Önerilen ölçü: yatay, en az 1920×900 px, JPG/WebP, 400 KB altı.
 # Fotoğraf yoksa slaytta ürünün teknik çizimi gösterilir.
 # ---------------------------------------------------------------------------
 SLAYTLAR = [
-    {"foto": "01-menfez.jpg", "illus": "grille-double", "etiket": "Menfez imalatı",
+    # "odak": fotoğrafın hangi kısmının görüneceği — (masaüstü, mobil) CSS object-position değerleri
+    {"foto": "01-menfez.jpg", "illus": "grille-double", "etiket": "Menfez imalatı", "odak": ("center 72%", "42% center"),
      "baslik": "Menfezden dampere,<br>havanın <em>yönünü</em> biz çiziyoruz.",
      "metin": "Tek ve çift sıra kanatlı, lineer ve transfer menfezler; projenizin ölçüsüne göre alüminyumdan üretilir.",
      "buton": ("Menfezleri incele", "urunler.html#menfezler")},
-    {"foto": "02-kanal.jpg", "illus": "duct", "etiket": "Kanal sistemleri",
+    {"foto": "02-kanal.jpg", "illus": "duct", "etiket": "Kanal sistemleri", "odak": ("center", "68% center"),
      "baslik": "Havalandırma kanalınıza <em>tam uyumlu</em> ekipman.",
      "metin": "Damper, susturucu, plenum ve müdahale kapaklarıyla kanal hattının her noktası için çözüm.",
      "buton": ("Damperleri incele", "urunler.html#damperler")},
-    {"foto": "03-difuzor.jpg", "illus": "diffuser-square", "etiket": "Difüzörler",
+    {"foto": "03-difuzor.jpg", "illus": "diffuser-square", "etiket": "Difüzörler", "odak": ("center", "46% center"),
      "baslik": "Asma tavanlarda <em>homojen</em> hava dağılımı.",
      "metin": "Kare, dairesel, perfore, swirl ve lineer slot difüzörler; RAL renk seçenekleriyle.",
      "buton": ("Difüzörleri incele", "urunler.html#difuzorler")},
-    {"foto": "04-proje.jpg", "illus": "louver", "etiket": "Projelerimiz",
+    {"foto": "04-proje.jpg", "illus": "louver", "etiket": "Projelerimiz", "odak": ("center 35%", "center 40%"),
      "baslik": "Hastaneden AVM'ye, <em>şantiyede</em> test edilmiş ürünler.",
      "metin": "Ürünlerimizin kullanıldığı hastane, AVM, ofis, otopark ve endüstri projelerini inceleyin.",
      "buton": ("Projeleri gör", "projeler.html")},
+    {"foto": "05-endustri.jpg", "illus": "silencer", "etiket": "Endüstriyel havalandırma", "odak": ("center 62%", "52% center"),
+     "baslik": "Fan ve kanal hatlarında <em>sessiz, güvenli</em> hava akışı.",
+     "metin": "Susturucu, geri akış damperi ve dış hava panjurlarıyla fan çıkışları ve egzoz hatları için çözümler.",
+     "buton": ("Susturucuları incele", "urunler.html#susturucular")},
 ]
 
 FOTO_UZANTI = {".jpg", ".jpeg", ".png", ".webp"}
@@ -551,7 +557,9 @@ def slider():
         gizli = "" if i == 0 else ' aria-hidden="true"'
         if foto.exists():
             yukle = 'fetchpriority="high"' if i == 0 else 'loading="lazy"'
-            medya = f'<img class="slide-img" src="assets/img/slider/{sl["foto"]}" alt="{escape(sl["etiket"])}" {yukle}>'
+            odak_d, odak_m = sl.get("odak", ("center", "center"))
+            medya = (f'<img class="slide-img" src="assets/img/slider/{sl["foto"]}" alt="{escape(sl["etiket"])}" {yukle} '
+                     f'style="--pos-d:{odak_d};--pos-m:{odak_m}">')
             cls = "slide has-photo"
         elif i == 0:
             medya = f'<div class="slide-art hero-visual">{hero_svg()}</div>'

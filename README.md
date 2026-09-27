@@ -8,7 +8,7 @@ Oğuz Klima Havalandırma İnşaat San. ve Tic. Ltd. Şti. için statik (HTML/CS
 index.html, urunler.html, projeler.html, hakkimizda.html, iletisim.html  ← üretilen sayfalar
 assets/css/style.css     ← tüm stiller (renkler en üstte)
 assets/js/main.js        ← menü, ürün teknik çizimleri, proje galerisi, form
-assets/img/slider/       ← ana sayfa slayt fotoğrafları (01-menfez.jpg, 02-kanal.jpg, 03-difuzor.jpg, 04-proje.jpg)
+assets/img/slider/       ← ana sayfa slayt fotoğrafları (01-menfez.jpg … 05-endustri.jpg)
 assets/img/projeler/     ← proje fotoğrafları: <slug>/01.jpg, 02.jpg ...
 assets/img/              ← logolar (SVG + PNG), favicon
 tools/build.py           ← sayfaları üreten betik: firma bilgileri ve ürün listesi burada

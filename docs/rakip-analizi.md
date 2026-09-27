@@ -46,8 +46,8 @@
 
 ## 4. Ana sayfa slayt fotoğrafları
 
-Slayt gösterisi 4 slayttan oluşur. Fotoğraflar `assets/img/slider/` klasörüne şu adlarla konur:
-`01-menfez.jpg`, `02-kanal.jpg`, `03-difuzor.jpg`, `04-proje.jpg`. Fotoğraf olmayan slaytta ürünün teknik çizimi görünür.
+Slayt gösterisi 5 slayttan oluşur. Fotoğraflar `assets/img/slider/` klasörüne şu adlarla konur:
+`01-menfez.jpg`, `02-kanal.jpg`, `03-difuzor.jpg`, `04-proje.jpg`, `05-endustri.jpg`. Fotoğraf olmayan slaytta ürünün teknik çizimi görünür.
 
 - Yatay, en az 1920×900 px, JPG veya WebP, dosya başına 400 KB altı.
 - En iyisi kendi ürün, atölye ve şantiye fotoğraflarınız. Rakip sitelerden alınan fotoğraflar telif hakkı nedeniyle kullanılmamalı.
