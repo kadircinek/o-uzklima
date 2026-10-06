@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { girdiOnayla, girdiSil, girdiYenidenAyristir, type KartVerisi } from "@/app/actions/girdi";
+import { girdiOnayla, girdiSil, girdiYenidenAyristir } from "@/app/actions/girdi";
 import { formatDateTime, formatShort, type DateStr } from "@/lib/dates";
 import {
   ASAMA_ETIKET,
@@ -13,7 +13,7 @@ import {
   type Ayarlar,
   type FirmaTuru,
 } from "@/lib/domain";
-import { acikFirsatBul, olayiDuzelt, onayEksigi, onayPlani, type KartBaglami, type OnayVerisi } from "@/lib/inbox";
+import { acikFirsatBul, olayiDuzelt, onayEksigi, onayPlani, type KartBaglami, type OnayVerisi, type KartVerisi } from "@/lib/inbox";
 import { DUSUK_GUVEN, type Aksiyon } from "@/lib/parse/schema";
 import { olayAsamasi, tekrarEtiketi } from "@/lib/rules";
 import { useBildirim } from "./bildirim";

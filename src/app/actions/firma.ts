@@ -19,6 +19,7 @@ const FirmaFormu = z.object({
   segment: z.string().max(200).nullable(),
   aktif: z.boolean(),
   notlar: z.string().max(10_000).nullable(),
+  eposta_alanlari: z.array(z.string().regex(/^[a-z0-9-]+(\.[a-z0-9-]+)+$/, "Geçersiz alan adı").max(253)).max(20),
 });
 export type FirmaFormVerisi = z.infer<typeof FirmaFormu>;
 

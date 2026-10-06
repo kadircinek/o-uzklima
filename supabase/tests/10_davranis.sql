@@ -92,3 +92,21 @@ do $$ begin
 exception when insufficient_privilege then raise notice 'OK: ses klasörü sahibine özel';
 end $$;
 reset role;
+
+-- E-posta bağlantısı
+select pg_temp.bekle('her kullanıcıya farklı e-posta anahtarı',
+  (select count(distinct eposta_anahtari) = 2 and bool_and(eposta_anahtari ~ '^[a-z0-9]{12}$') from public.settings));
+insert into public.email_log (user_id, message_id, gonderen, sonuc)
+  values ('00000000-0000-0000-0000-00000000000a', '<m1@x>', 'a@x', 'gelen_kutusu'),
+         ('00000000-0000-0000-0000-00000000000b', '<m1@x>', 'b@x', 'not');
+do $$ begin
+  insert into public.email_log (user_id, message_id, sonuc) values ('00000000-0000-0000-0000-00000000000a', '<m1@x>', 'not');
+  raise exception 'BAŞARISIZ: aynı e-posta iki kez kaydedildi';
+exception when unique_violation then raise notice 'OK: aynı e-posta kullanıcı başına bir kez işlenir';
+end $$;
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000b';
+select pg_temp.bekle('e-posta günlüğü yalnızca sahibine görünür', (select count(*) from public.email_log) = 1);
+insert into public.companies (ad, eposta_alanlari) values ('Delta', '{delta.de}');
+select pg_temp.bekle('firma görünümünde alan adları var', (select eposta_alanlari = '{delta.de}' from public.company_overview));
+reset role;

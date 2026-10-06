@@ -3,6 +3,7 @@
 
 import { isDateStr, isTimeStr, zonedTime, type DateStr } from "./dates";
 import type { Asama, Ayarlar, FirmaTuru, GirdiTuru, Olay } from "./domain";
+import type { GirdiEpostasi } from "./eposta";
 import { eslestir } from "./match";
 import type { Aksiyon, Ayristirma } from "./parse/schema";
 import { gunHatirlatmasi, ilkTekrar, olayAsamasi, planla, tekrarCoz, type GorevPlani } from "./rules";
@@ -25,14 +26,28 @@ export type OnayVerisi = {
   aksiyonlar: Aksiyon[];
 };
 
-export type KartFirmasi = { id: string; ad: string; tur: FirmaTuru };
-export type KartKisisi = { id: string; ad: string; company_id: string };
+export type KartFirmasi = { id: string; ad: string; tur: FirmaTuru; eposta_alanlari: string[] };
+export type KartKisisi = { id: string; ad: string; company_id: string; eposta: string | null };
 export type KartFirsati = { id: string; company_id: string; urun: string; asama: Asama };
 
 export type KartBaglami = {
   firmalar: KartFirmasi[];
   kisiler: KartKisisi[];
   firsatlar: KartFirsati[];
+};
+
+/** Gelen kutusundaki bir kaydın onay kartı verisi. */
+export type KartVerisi = {
+  id: string;
+  ham_metin: string;
+  created_at: string;
+  ses_dosyasi: string | null;
+  kaynak: "elle" | "eposta";
+  eposta: GirdiEpostasi | null;
+  ayristirma: Ayristirma;
+  /** Ayrıştırma yapılamadıysa nedeni; kart elle doldurulur */
+  hata: string | null;
+  onay: OnayVerisi;
 };
 
 /** Fırsat aşamalarının ilerleme sırası (kaybedildi hariç). */

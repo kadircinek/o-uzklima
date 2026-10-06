@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { girdiYakala, type KartVerisi } from "@/app/actions/girdi";
+import { girdiYakala } from "@/app/actions/girdi";
 import type { DateStr } from "@/lib/dates";
 import type { Ayarlar } from "@/lib/domain";
-import type { KartBaglami } from "@/lib/inbox";
+import type { KartBaglami, KartVerisi } from "@/lib/inbox";
 import { createClient } from "@/lib/supabase/client";
 import { useBildirim } from "./bildirim";
 import { IkonMikrofon } from "./icons";

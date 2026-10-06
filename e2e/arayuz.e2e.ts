@@ -284,6 +284,8 @@ describe("kısayollar ve paylaşım", () => {
   it("masaüstünde N kısayolu, ?ekle=1 ve paylaşım hedefi hızlı girişi açar", async () => {
     await page.setViewportSize({ width: 1280, height: 860 });
     await page.goto(UYGULAMA + "/");
+    // Kısayol dinleyicisi sayfa etkileşimli olunca kurulur.
+    await page.waitForLoadState("networkidle");
     await page.keyboard.press("n");
     expect(await page.locator("dialog[open] textarea").isVisible()).toBe(true);
     await page.keyboard.press("Escape");

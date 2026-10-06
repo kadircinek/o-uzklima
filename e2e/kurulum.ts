@@ -1,6 +1,6 @@
 import type { Server } from "node:http";
 import { baslat } from "./mock-claude.mjs";
-import { db, EPOSTA, SIFRE, UYGULAMA } from "./yardimci";
+import { ARKADAS_EPOSTA, db, EPOSTA, SIFRE, UYGULAMA } from "./yardimci";
 
 // Uçtan uca testlerden önce: Claude taklidini başlatır, test kullanıcısını
 // oluşturur ve yalnızca bu kullanıcının verilerini sıfırlar.
@@ -27,7 +27,11 @@ export async function setup() {
     const { error } = await db.from(t).delete().eq("user_id", id);
     if (error) throw error;
   }
-  await db.from("settings").upsert({ user_id: id, kurallar: {}, ek_tatiller: [] });
+  await db.from("settings").upsert({ user_id: id, kurallar: {}, ek_tatiller: [], eposta_gondericiler: [] });
+  await db.from("email_log").delete().eq("user_id", id);
+  // Ekip testinin açtığı arkadaş hesabı önceki çalıştırmadan kaldıysa sil.
+  const arkadas = data.users.find((u) => u.email === ARKADAS_EPOSTA);
+  if (arkadas) await db.auth.admin.deleteUser(arkadas.id);
   const { data: dosyalar } = await db.storage.from("ses").list(id);
   if (dosyalar?.length) await db.storage.from("ses").remove(dosyalar.map((f) => `${id}/${f.name}`));
 }

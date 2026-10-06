@@ -103,7 +103,8 @@ describe("istem", () => {
       { ad: "Zeta", tur: "musteri", kisiler: ["Veli", "Ali"] },
       { ad: "Basechem", tur: "tedarikci", kisiler: [] },
     ]);
-    expect(a).toBe("Firma dizini (ad | tür | kişiler):\n- Basechem | Tedarikçi\n- Zeta | Müşteri | Ali, Veli");
+    expect(a).toBe("Firma dizini (ad | tür | kişiler | e-posta alan adları):\n- Basechem | Tedarikçi\n- Zeta | Müşteri | Ali, Veli");
+    expect(firmaDizini([{ ad: "Acme", tur: "musteri", kisiler: [], alanlar: ["acme.com"] }])).toContain("- Acme | Müşteri | @acme.com");
   });
 
   it("kullanıcı mesajı bugünü ve modu içerir", () => {

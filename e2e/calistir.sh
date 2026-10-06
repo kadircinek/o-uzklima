@@ -37,6 +37,9 @@ export ANTHROPIC_API_KEY="e2e-sahte-anahtar"
 export ANTHROPIC_BASE_URL="http://127.0.0.1:4010"
 export NODE_EXTRA_CA_CERTS="$PWD/e2e/.cikti/push-cert.pem"
 export E2E_APP_URL="http://127.0.0.1:3100"
+export EPOSTA_GELEN_ADRESI="e2egelen@inbound.postmarkapp.com"
+export EPOSTA_WEBHOOK_ANAHTARI="e2e-$(openssl rand -hex 16)"
+export YONETICI_EPOSTALARI="e2e@lifeos.test"
 unset ANTHROPIC_AUTH_TOKEN ANTHROPIC_MODEL
 
 if curl -s -o /dev/null "$E2E_APP_URL"; then

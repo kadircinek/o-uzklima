@@ -32,5 +32,10 @@ export async function requireUser() {
   const { data, error } = await supabase.auth.getClaims();
   const userId = data?.claims?.sub;
   if (error || !userId) redirect("/giris");
-  return { supabase, userId };
+  return {
+    supabase,
+    userId,
+    eposta: (data.claims.email as string | undefined) ?? null,
+    meta: (data.claims.user_metadata ?? {}) as { sifre_degistirmeli?: boolean },
+  };
 }

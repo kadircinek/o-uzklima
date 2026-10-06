@@ -23,6 +23,7 @@ export type CompanyRow = {
   aktif: boolean;
   son_temas: string | null;
   notlar: string | null;
+  eposta_alanlari: string[];
   created_at: string;
   updated_at: string;
 };
@@ -62,6 +63,8 @@ export type InboxRow = {
   ayristirma_json: Json | null;
   durum: "islenmedi" | "islendi";
   hata: string | null;
+  kaynak: "elle" | "eposta";
+  eposta: Json | null;
   created_at: string;
   updated_at: string;
 };
@@ -107,6 +110,8 @@ export type SettingsRow = {
   sessiz_liste_gunu: number;
   ek_tatiller: string[];
   kurallar: Json;
+  eposta_anahtari: string;
+  eposta_gondericiler: string[];
   created_at: string;
   updated_at: string;
 };
@@ -128,6 +133,17 @@ export type NotificationLogRow = {
   tur: "hatirlatma" | "ozet";
   gun: string;
   gonderim: string;
+};
+
+export type EmailLogRow = {
+  id: number;
+  user_id: string | null;
+  alinma: string;
+  message_id: string | null;
+  gonderen: string | null;
+  konu: string | null;
+  sonuc: "isleniyor" | "gelen_kutusu" | "not" | "reddedildi";
+  aciklama: string | null;
 };
 
 export type CompanyOverviewRow = CompanyRow & { acik_gorev: number; acik_firsat: number };
@@ -181,6 +197,7 @@ export type Database = {
         NotificationLogRow,
         Insert<Omit<NotificationLogRow, "id">, "user_id" | "tur" | "gun">
       >;
+      email_log: Table<EmailLogRow, Partial<Omit<EmailLogRow, "id">>>;
     };
     Views: {
       company_overview: {

@@ -15,6 +15,7 @@ import {
 import type { CompanyRow, ContactRow, NoteRow } from "@/lib/database.types";
 import { formatDateTime } from "@/lib/dates";
 import { FIRMA_TURLERI, FIRMA_TURU_ETIKET, type FirmaTuru } from "@/lib/domain";
+import { alanAdlariniCoz } from "@/lib/eposta";
 import { satirlariDonustur, sutunlariTahminEt, type Alan, type IceAktarimOnizleme } from "@/lib/ice-aktar";
 import { useBildirim } from "./bildirim";
 import { IkonArti, IkonCop, IkonKalem } from "./icons";
@@ -47,7 +48,9 @@ function FirmaFormu({ firma, kapat }: { firma?: CompanyRow; kapat: () => void })
     segment: firma?.segment ?? null,
     aktif: firma?.aktif ?? true,
     notlar: firma?.notlar ?? null,
+    eposta_alanlari: firma?.eposta_alanlari ?? [],
   });
+  const [alanMetni, setAlanMetni] = useState((firma?.eposta_alanlari ?? []).join(", "));
   const [hata, setHata] = useState<string | null>(null);
   const [bekliyor, baslat] = useTransition();
   const bildir = useBildirim();
@@ -59,7 +62,7 @@ function FirmaFormu({ firma, kapat }: { firma?: CompanyRow; kapat: () => void })
       onSubmit={(e) => {
         e.preventDefault();
         baslat(async () => {
-          const r = await firmaKaydet(firma?.id ?? null, f);
+          const r = await firmaKaydet(firma?.id ?? null, { ...f, eposta_alanlari: alanAdlariniCoz(alanMetni) });
           if (!r.ok) return setHata(r.hata);
           bildir("Kaydedildi");
           kapat();
@@ -86,6 +89,9 @@ function FirmaFormu({ firma, kapat }: { firma?: CompanyRow; kapat: () => void })
           <Girdi value={f.segment ?? ""} onChange={(e) => guncelle({ segment: e.target.value || null })} />
         </Etiket>
       </div>
+      <Etiket ad="E-posta alan adları (gelen/giden e-postaları bu firmayla eşleştirir)">
+        <Girdi value={alanMetni} onChange={(e) => setAlanMetni(e.target.value)} placeholder="acme.com, acme.com.tr" />
+      </Etiket>
       <Etiket ad="Notlar">
         <MetinAlani rows={3} value={f.notlar ?? ""} onChange={(e) => guncelle({ notlar: e.target.value || null })} />
       </Etiket>

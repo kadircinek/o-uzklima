@@ -46,6 +46,9 @@ export default async function FirmaSayfasi({ params }: { params: Promise<{ id: s
             {firma.ulke && <span>{firma.ulke}</span>}
             {firma.segment && <span>· {firma.segment}</span>}
             {!firma.aktif && <Rozet>Pasif</Rozet>}
+            {firma.eposta_alanlari.map((a) => (
+              <Rozet key={a}>@{a}</Rozet>
+            ))}
             <Rozet tur={sessiz ? "uyari" : "notr"}>
               {sonTemas === null ? "Hiç temas yok" : sonTemas === 0 ? "Son temas bugün" : `Son temas ${sonTemas} gün önce`}
             </Rozet>

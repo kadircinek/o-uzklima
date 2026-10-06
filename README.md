@@ -18,7 +18,9 @@ Claude API, Web Push.
 | **Fırsatlar** | Talep → Numune → Teklif → Müzakere → Sipariş / Kaybedildi panosu. Aşama değişince önceki aşamanın görevi kapanır, yeni aşamanın takip görevi açılır. |
 | **Bugün** | Gecikenler (kırmızı), bugünküler, bekledikleriniz, sessiz müşteriler, işlenmemiş kayıt uyarısı. |
 | **Bildirimler** | Her iş günü 08:30'da "bugünün 5 önceliği" özeti, vade günü 09:00 hatırlatmaları. Her bildirimde **Bitti / Ertele / Aç**. Günde en fazla 6 hatırlatma; fazlası özete ve Bugün ekranına kalır. |
-| **Ayarlar** | Kural süreleri, özet ve hatırlatma saati, günlük sınır, aşama görevleri, ek tatil günleri, bildirim izni, içe aktarma. |
+| **E-posta** | Her kullanıcıya özel LifeOS adresi. E-postayı bu adrese **ilet** → gelen kutusuna düşer, Claude ayrıştırır. Müşteriye yazarken **gizli kopya (BCC)** ekle → firmaya not düşer, son temas güncellenir. Gönderen adresinin alan adı firmayla eşleştirilir ve onaylandıkça öğrenilir. |
+| **Ekip** | Yönetici, ofisteki arkadaşlarına Ayarlar'dan hesap açar (geçici şifre, iPhone kurulum mesajı, QR kod). Herkesin verisi kendine özeldir. |
+| **Ayarlar** | Kural süreleri, özet ve hatırlatma saati, günlük sınır, aşama görevleri, ek tatil günleri, bildirim izni, e-posta bağlantısı, ekip, şifre, içe aktarma. |
 
 Telefonda ana ekran simgesine uzun basınca **Hızlı giriş** kısayolu çıkar. WhatsApp veya e-postadan **Paylaş → LifeOS**
 ile metin doğrudan hızlı girişe düşer.
@@ -50,6 +52,7 @@ gönderimi girildiğinde otomatik ilerler.
 2. SQL Editor'de sırayla çalıştırın:
    - `supabase/migrations/20261005000000_init.sql` (tablolar, RLS, tetikleyiciler)
    - `supabase/migrations/20261005000100_storage.sql` (sesli notlar için özel depolama)
+   - `supabase/migrations/20261006000000_eposta.sql` (e-posta bağlantısı)
 
    Supabase CLI kullanıyorsanız: `npx supabase link` ve `npx supabase db push`.
 3. **Authentication → Users → Add user** ile kendi e-posta ve şifrenizi ekleyin.
@@ -66,6 +69,8 @@ gönderimi girildiğinde otomatik ilerler.
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | `npx web-push generate-vapid-keys` |
 | `VAPID_SUBJECT` | `mailto:` + e-posta adresiniz |
 | `CRON_SECRET` | `openssl rand -hex 32` |
+| `EPOSTA_GELEN_ADRESI`, `EPOSTA_WEBHOOK_ANAHTARI` | Postmark (aşağıda **E-posta**) |
+| `YONETICI_EPOSTALARI` | Arkadaşlarına hesap açabilecek yönetici e-postaları (virgülle) |
 
 Claude anahtarı yoksa uygulama yine çalışır; onay kartı elle doldurulur.
 
@@ -90,6 +95,45 @@ npm run dev        # http://localhost:3000
   uygulamada çalışır.
 - Ardından **Ayarlar → Bildirim izni → Aç**. Her cihazı ayrı açın; deneme bildirimi gelir.
 
+### 6. E-posta bağlantısı (Postmark)
+
+Postmark, LifeOS adresine gelen e-postaları uygulamaya iletir. Alan adı veya BT desteği gerekmez.
+
+1. [postmarkapp.com](https://postmarkapp.com)'da hesap açın → **Servers → Create server** ("LifeOS").
+2. Sunucunun **Default Inbound Stream → Settings** sayfasındaki gelen adresini (`…@inbound.postmarkapp.com`)
+   `EPOSTA_GELEN_ADRESI` olarak tanımlayın.
+3. `EPOSTA_WEBHOOK_ANAHTARI` için rastgele bir değer üretin (`openssl rand -hex 24`) ve aynı sayfadaki **Webhook**
+   alanına şunu yazın: `https://lifeos:<EPOSTA_WEBHOOK_ANAHTARI>@<uygulama-adresi>/api/eposta/gelen`
+4. Vercel'de iki değişkeni ekleyip yeniden yayınlayın. **Ayarlar → E-posta bağlantısı**'nda herkes kendi adresini görür.
+
+Kullanım (her kullanıcı kendi adresiyle):
+
+- **İlet:** Takip edilecek e-postayı LifeOS adresine iletin; en üste not yazabilirsiniz ("perşembe dönüş yap").
+  Gelen kutusuna düşer, Claude görevi çıkarır, siz onaylarsınız.
+- **Gizli kopya (BCC):** Müşteriye yazarken LifeOS adresini Bcc'ye ekleyin. E-posta alıcının firmasına not olarak
+  düşer ve son temas güncellenir; firma bilinmiyorsa gelen kutusuna düşer.
+- **Kendine not:** LifeOS adresine doğrudan yazılan e-posta hızlı giriş gibi işlenir.
+- Yalnızca kullanıcının giriş e-postasından ve **Ayarlar → Kabul edilen gönderenler**'e eklediği adreslerden
+  (ör. `ad@buteo.com.tr`) gelen e-postalar kabul edilir. **Son gelen e-postalar** listesi neyin işlendiğini gösterir.
+- Firmalar e-posta alan adlarıyla (ör. `acme.com`) eşleşir. Alan adı firma formundan girilebilir; e-postadan gelen bir
+  kaydı bir firmaya bağlayıp onayladığınızda da kendiliğinden öğrenilir. Genel servisler (gmail, hotmail…) ve kendi
+  şirket alan adınız eşleştirmede yok sayılır.
+- Microsoft 365'te dış adrese **otomatik** yönlendirme kuralları şirket yöneticisi tarafından kapatılmış olabilir; elle
+  iletme ve Bcc bundan etkilenmez.
+- Postmark'ın ücretsiz planı düşük hacimlidir; ekipçe kullanımda Postmark'ın güncel fiyatlarına bakın.
+
+### 7. Ekip (ofisteki arkadaşlar)
+
+1. `YONETICI_EPOSTALARI`'na kendi adresinizi yazın (birden fazlaysa virgülle).
+2. **Ayarlar → Ekip → Hesap aç**: ad ve e-posta girin. Geçici şifreli kurulum mesajı ve uygulama adresinin QR kodu
+   gösterilir; **WhatsApp ile gönder** veya **Mesajı kopyala**.
+3. Arkadaşınız iPhone'da Safari ile adresi açar → Paylaş → **Ana Ekrana Ekle** → giriş yapar → ilk girişte kendi
+   şifresini belirler → Ayarlar'dan bildirimleri ve e-posta adresini kurar.
+4. Şifresini unutan için **Şifre sıfırla**, ayrılan için **Kaldır** (o kişinin tüm LifeOS verisi silinir).
+
+Her kullanıcının görevleri, firmaları, fırsatları, e-postaları ve bildirimleri kendine özeldir; hesap açmak veri
+paylaşmak değildir. Claude API kullanımı tek anahtar üzerinden faturalanır.
+
 ## Mimari
 
 ```
@@ -98,14 +142,16 @@ src/
     actions/           Server action'lar (her biri oturum + zod doğrulaması yapar)
     api/cron/tick      Hatırlatma motoru (CRON_SECRET ile)
     api/push/action    Bildirimdeki Bitti/Ertele (imzalı, oturumsuz)
+    api/eposta/gelen   Postmark gelen e-posta webhook'u (Basic Auth)
   components/          Arayüz (onay kartı, hızlı giriş, görev satırı, pano…)
   lib/
     dates.ts holidays.ts   Saat dilimi, iş günü, Türkiye tatilleri
     rules.ts               Hatırlatma kuralları, erteleme, tekrar, aşama görevleri
     engine.ts              Özet, günlük sınır, sessiz müşteri, bildirim metinleri
     inbox.ts match.ts      Onay kartı modeli, firma/kişi eşleştirme
+    eposta.ts              İletilen e-postayı ayırma, BCC tanıma, alan adıyla firma eşleştirme
     parse/                 Claude istemi ve sabit JSON şeması
-    server/                Claude çağrısı, iş kuralları (ops), cron (tick), push, sorgular
+    server/                Claude çağrısı, iş kuralları (ops), cron (tick), push, e-posta, ekip, sorgular
 supabase/
   migrations/          Şema + RLS + tetikleyiciler, depolama
   cron.sql             pg_cron + pg_net zamanlaması
@@ -124,7 +170,7 @@ kaydı Supabase Storage'da (`ses` klasörü, yalnızca sahibi erişir) saklanır
 "Toplantı notu" işaretlenirse Claude özet ve aksiyon listesi çıkarır; seçilen aksiyonlar görev olur.
 
 **Veri modeli.** Altı ana tablo (`inbox_items`, `companies`, `contacts`, `tasks`, `deals`, `notes`) ve yardımcı
-tablolar (`settings`, `push_subscriptions`, `notification_log`). Her satır `user_id` ile sahibine bağlıdır; RLS
+tablolar (`settings`, `push_subscriptions`, `notification_log`, `email_log`). Her satır `user_id` ile sahibine bağlıdır; RLS
 yalnızca sahibine gösterir ve bileşik yabancı anahtarlar bir kaydın başka kullanıcının firmasına bağlanmasını
 engeller.
 
@@ -141,7 +187,8 @@ PGURL=postgresql://postgres@localhost:5432/postgres bash supabase/tests/calistir
 `npm run test:e2e`, yerel Supabase'i (Docker) başlatır, uygulamayı derleyip 3100 portunda çalıştırır ve Claude API ile
 push servisini taklit eden sunucularla PRD senaryolarının tamamını tarayıcıda dener: giriş, içe aktarma, her kural için
 hızlı giriş, gelen kutusu, tekrar ve erteleme, aşama değişimi, son temas, özet ve günlük sınır, şifreli Web Push,
-bildirimden Bitti/Ertele, sesli not kaydı. Gerçek projenize veya Claude API'ye dokunmaz. İlk çalıştırmadan önce bir kez
+bildirimden Bitti/Ertele, sesli not kaydı, Postmark biçiminde iletilen/BCC e-postalar, ekip hesabı açma ve ilk girişte
+şifre belirleme. Gerçek projenize veya Claude API'ye dokunmaz. İlk çalıştırmadan önce bir kez
 `npx playwright install chromium` gerekir.
 
 ## Kapsam dışı / sonraki adımlar
@@ -150,5 +197,6 @@ bildirimden Bitti/Ertele, sesli not kaydı. Gerçek projenize veya Claude API'ye
   *Hızlı giriş* kısayolu ve *Paylaş → LifeOS* hedefi var.
 - **Ses dosyasından yazıya sunucu tarafında çevirme yok:** Konuşma tanımayı desteklemeyen tarayıcılarda (ör. Firefox)
   ses saklanır ama metni elle yazmak gerekir.
-- PRD yol haritası (v1.1+): Outlook/WhatsApp iletme, takvim, Business Central'dan otomatik vade/sipariş, haftalık
-  rapor, kişisel alanlar.
+- **Ortak veri yok:** Ekip üyeleri aynı firma listesini veya fırsatları paylaşmaz; her biri kendi LifeOS'unu kullanır.
+- **Outlook'a doğrudan bağlantı (Microsoft Graph) yok:** E-postalar iletme/Bcc ile gelir; posta kutusu okunmaz.
+- PRD yol haritası (v1.1+): takvim, Business Central'dan otomatik vade/sipariş, haftalık rapor, kişisel alanlar.

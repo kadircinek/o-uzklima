@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { girdiOnayla, sesAdresi, type KartVerisi } from "@/app/actions/girdi";
+import { girdiOnayla, sesAdresi } from "@/app/actions/girdi";
 import { formatDateTime, formatShort, type DateStr } from "@/lib/dates";
 import { GIRDI_TURU_ETIKET, OLAY_ETIKET, type Ayarlar } from "@/lib/domain";
-import { onayEksigi, type KartBaglami } from "@/lib/inbox";
+import { onayEksigi, type KartBaglami, type KartVerisi } from "@/lib/inbox";
 import { DUSUK_GUVEN } from "@/lib/parse/schema";
 import { tekrarEtiketi } from "@/lib/rules";
 import { useBildirim } from "./bildirim";
@@ -119,6 +119,9 @@ function GirdiOgesi({
           <span className="shrink-0 text-xs text-muted">{formatDateTime(new Date(kart.created_at), saatDilimi)}</span>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          {kart.kaynak === "eposta" && (
+            <Rozet>{kart.eposta?.yon === "gizli_kopya" ? "Gönderilen e-posta" : "E-posta"}</Rozet>
+          )}
           {kart.hata ? (
             <Rozet tur="uyari">Elle doldurulmalı</Rozet>
           ) : (

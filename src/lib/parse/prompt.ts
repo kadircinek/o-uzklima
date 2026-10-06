@@ -50,6 +50,12 @@ guven — 0 ile 1 arası: tür, firma ve tarihten ne kadar eminsin. Belirsiz, ç
 
 ozet ve aksiyonlar — girdi bir toplantı/görüşme notuysa ya da mod "toplantı" ise: tur = not; ozet = 2-4 cümlelik özet; aksiyonlar = notta geçen yapılacaklar ve beklenenler (her biri tur gorev/takip/bekleme, kısa baslik, varsa tarih). Diğer durumlarda ozet null, aksiyonlar boş dizi.
 
+## E-posta ile gelen girdiler
+
+Girdi "[E-posta]" ile başlıyorsa kullanıcı bir e-postayı LifeOS'a iletmiştir. Varsa en üstteki serbest metin kullanıcının notudur ve en önemli talimattır ("perşembe dönüş yap", "takip et"). Not yoksa e-postanın içeriğinden kullanıcının yapması veya beklemesi gerekeni çıkar: müşteri fiyat/teklif istiyorsa gorev ("… için teklif hazırla"), bir belge/cevap bekleniyorsa bekleme, yalnızca bilgi ise not. Firma genellikle orijinal gönderenin firmasıdır; gönderen adresinin alan adı dizindeki bir firmanın alan adıyla eşleşiyorsa o firmayı yaz. Kullanıcının kendi şirketi Buteo Petrokimya'dır; onu firma olarak yazma.
+
+"[Gönderilen e-posta]" ile başlıyorsa kullanıcı bu e-postayı müşteriye kendisi göndermiştir; teklif veya numune gönderimi anlatılıyorsa ilgili olayı seç, aksi halde not.
+
 ## Örnekler (Bugün: 2026-03-02 Pazartesi)
 
 "X firmasına Lucon teklifi gitti" → tur takip, olay teklif_gonderildi, baslik "Lucon teklifine dönüş geldi mi?", firma "X", urun "Lucon", tarih null.
@@ -58,7 +64,7 @@ ozet ve aksiyonlar — girdi bir toplantı/görüşme notuysa ya da mod "toplant
 "Z firmasının 15 Kasım vadeli ödemesi" → tur vade, olay odeme_vadesi, baslik "Ödeme vadesi", firma "Z", tarih 2026-11-15.
 "Her ay 5'inde stok raporu" → tur gorev, olay yok, baslik "Stok raporu", tekrar aylik:5, tarih null.`;
 
-export type DizinFirmasi = { ad: string; tur: FirmaTuru; kisiler: string[] };
+export type DizinFirmasi = { ad: string; tur: FirmaTuru; kisiler: string[]; alanlar?: string[] };
 
 /** Firma dizinini sabit sırayla metne döker (önbellek için deterministik). */
 export function firmaDizini(firmalar: DizinFirmasi[], sinir = 800): string {
@@ -68,9 +74,10 @@ export function firmaDizini(firmalar: DizinFirmasi[], sinir = 800): string {
     .slice(0, sinir)
     .map((f) => {
       const kisiler = f.kisiler.length ? ` | ${[...f.kisiler].sort((a, b) => a.localeCompare(b, "tr")).join(", ")}` : "";
-      return `- ${f.ad} | ${FIRMA_TURU_ETIKET[f.tur]}${kisiler}`;
+      const alanlar = f.alanlar?.length ? ` | ${[...f.alanlar].sort().map((a) => "@" + a).join(" ")}` : "";
+      return `- ${f.ad} | ${FIRMA_TURU_ETIKET[f.tur]}${kisiler}${alanlar}`;
     });
-  return `Firma dizini (ad | tür | kişiler):\n${satirlar.join("\n")}`;
+  return `Firma dizini (ad | tür | kişiler | e-posta alan adları):\n${satirlar.join("\n")}`;
 }
 
 export function kullaniciMesaji(metin: string, bugun: DateStr, haftaGunu: number, toplanti: boolean): string {

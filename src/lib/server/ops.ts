@@ -3,6 +3,7 @@ import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import { todayIn, type DateStr } from "../dates";
 import type { Database, TaskRow } from "../database.types";
 import { ayarlariTamamla, type Asama, type Ayarlar, type FirmaTuru, type GorevTuru } from "../domain";
+import { kendiAlanlari, ogrenilecekAlanlar, type GirdiEpostasi } from "../eposta";
 import { asamaIleriMi, onayPlani, type OnayVerisi } from "../inbox";
 import { normalizeAd } from "../match";
 import {
@@ -266,6 +267,28 @@ export async function kisiBulVeyaOlustur(db: Db, userId: string, companyId: stri
   return data!.id;
 }
 
+/** Firmanın e-posta alan adlarına yenilerini ekler. */
+export async function alanAdlariniOgret(db: Db, userId: string, companyId: string, alanlar: string[]): Promise<void> {
+  if (!alanlar.length) return;
+  const { data } = await db
+    .from("companies")
+    .select("eposta_alanlari")
+    .eq("id", companyId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!data) return;
+  const yeni = [...new Set([...data.eposta_alanlari, ...alanlar])];
+  if (yeni.length === data.eposta_alanlari.length) return;
+  const { error } = await db.from("companies").update({ eposta_alanlari: yeni }).eq("id", companyId).eq("user_id", userId);
+  kontrol(error, "Firma alan adları güncellenemedi");
+}
+
+/** Kullanıcının kendi (şirket) alan adları: giriş e-postası + izinli gönderen adresleri. */
+export async function kendiAlanlariGetir(db: Db, userId: string, girisEpostasi: string | null): Promise<string[]> {
+  const { data } = await db.from("settings").select("eposta_gondericiler").eq("user_id", userId).maybeSingle();
+  return kendiAlanlari([girisEpostasi, ...(data?.eposta_gondericiler ?? [])]);
+}
+
 /** Firmayla dışarıya dönük bir temas oldu (teklif/numune gönderimi). */
 async function sonTemasIlerlet(db: Db, userId: string, companyId: string): Promise<void> {
   const simdi = new Date().toISOString();
@@ -281,7 +304,7 @@ async function sonTemasIlerlet(db: Db, userId: string, companyId: string): Promi
 // ---------------------------------------------------------------------------
 // Gelen kutusu
 
-export type IslemeSonucu = { gorevSayisi: number; notId: string | null };
+export type IslemeSonucu = { gorevSayisi: number; notId: string | null; companyId: string | null };
 
 /** Onaylanan gelen kutusu kaydını görev/not/fırsat kayıtlarına dönüştürür. */
 export async function girdiIsle(
@@ -290,6 +313,7 @@ export async function girdiIsle(
   inboxId: string,
   onay: OnayVerisi,
   ayarlar: Ayarlar,
+  secenek: { kendiAlanlar?: string[] } = {},
 ): Promise<IslemeSonucu> {
   // Kaydı "işlendi" olarak sahiplen: iki kez onaylanırsa ikincisi durur.
   const { data: sahiplenen, error } = await db
@@ -298,13 +322,20 @@ export async function girdiIsle(
     .eq("id", inboxId)
     .eq("user_id", userId)
     .eq("durum", "islenmedi")
-    .select("id, ham_metin")
+    .select("id, ham_metin, eposta")
     .maybeSingle();
   kontrol(error, "Kayıt güncellenemedi");
   if (!sahiplenen) throw new IsHatasi("Bu kayıt zaten işlenmiş.");
 
   try {
-    return await girdiKayitlariniOlustur(db, userId, sahiplenen, onay, ayarlar);
+    const sonuc = await girdiKayitlariniOlustur(db, userId, sahiplenen, onay, ayarlar);
+    // E-postadan gelen kayıt bir firmaya bağlandıysa karşı tarafın alan adını
+    // firmaya öğret: sonraki e-postalar o firmayla kendiliğinden eşleşir.
+    const eposta = sahiplenen.eposta as GirdiEpostasi | null;
+    if (sonuc.companyId && eposta?.karsi_taraf.length) {
+      await alanAdlariniOgret(db, userId, sonuc.companyId, ogrenilecekAlanlar(eposta.karsi_taraf, secenek.kendiAlanlar));
+    }
+    return sonuc;
   } catch (e) {
     await db.from("inbox_items").update({ durum: "islenmedi" }).eq("id", inboxId).eq("user_id", userId);
     throw e;
@@ -390,7 +421,7 @@ async function girdiKayitlariniOlustur(
       });
       gorevSayisi++;
     }
-    return { gorevSayisi, notId: not!.id };
+    return { gorevSayisi, notId: not!.id, companyId };
   }
 
   const plan = onayPlani(onay, gun, ayarlar)!;
@@ -406,7 +437,7 @@ async function girdiKayitlariniOlustur(
     deal_id: dealId,
     kaynak_inbox_id: kayit.id,
   });
-  return { gorevSayisi: 1, notId: null };
+  return { gorevSayisi: 1, notId: null, companyId };
 }
 
 /** Görev formundan gelen alanlarla görev ekler/günceller (Görevler ekranı). */

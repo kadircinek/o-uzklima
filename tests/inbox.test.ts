@@ -18,12 +18,12 @@ const bugun = "2026-10-05";
 
 const baglam: KartBaglami = {
   firmalar: [
-    { id: "f-acme", ad: "Acme Plastik San. ve Tic. A.Ş.", tur: "musteri" },
-    { id: "f-base", ad: "Basechem", tur: "tedarikci" },
+    { id: "f-acme", ad: "Acme Plastik San. ve Tic. A.Ş.", tur: "musteri", eposta_alanlari: [] },
+    { id: "f-base", ad: "Basechem", tur: "tedarikci", eposta_alanlari: [] },
   ],
   kisiler: [
-    { id: "k-ali", ad: "Ali Yılmaz", company_id: "f-acme" },
-    { id: "k-ayse", ad: "Ayşe", company_id: "f-base" },
+    { id: "k-ali", ad: "Ali Yılmaz", company_id: "f-acme", eposta: null },
+    { id: "k-ayse", ad: "Ayşe", company_id: "f-base", eposta: null },
   ],
   firsatlar: [
     { id: "d-lucon", company_id: "f-acme", urun: "Lucon", asama: "numune" },

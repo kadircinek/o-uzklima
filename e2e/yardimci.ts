@@ -15,6 +15,7 @@ if (existsSync(".env.local")) {
 export const UYGULAMA = process.env.E2E_APP_URL ?? "http://127.0.0.1:3000";
 export const EPOSTA = "e2e@lifeos.test";
 export const SIFRE = "e2e-sifre-12345";
+export const ARKADAS_EPOSTA = "arkadas@lifeos.test";
 export const CRON_SECRET = process.env.CRON_SECRET ?? "";
 export const BUGUN = todayIn("Europe/Istanbul");
 

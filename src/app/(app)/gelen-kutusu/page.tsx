@@ -1,8 +1,8 @@
-import type { KartVerisi } from "@/app/actions/girdi";
 import { GelenKutusu } from "@/components/gelen-kutusu";
 import { HizliGirisDugmesi } from "@/components/hizli-giris-dugmesi";
 import { Bos, SayfaBasligi } from "@/components/ui";
-import { varsayilanOnay } from "@/lib/inbox";
+import type { GirdiEpostasi } from "@/lib/eposta";
+import { varsayilanOnay, type KartVerisi } from "@/lib/inbox";
 import { AyristirmaSemasi, ayristirmayiDuzelt, bosAyristirma } from "@/lib/parse/schema";
 import { ayarlariGetir, bugun } from "@/lib/server/ops";
 import { islenmemisGirdiler, kartBaglami } from "@/lib/server/queries";
@@ -15,7 +15,7 @@ export default async function GelenKutusuSayfasi() {
   const [ayarlar, girdiler, baglam] = await Promise.all([
     ayarlariGetir(supabase, userId),
     islenmemisGirdiler(supabase),
-    kartBaglami(supabase),
+    kartBaglami(supabase, userId),
   ]);
 
   const kartlar: KartVerisi[] = girdiler.map((g) => {
@@ -27,6 +27,8 @@ export default async function GelenKutusuSayfasi() {
       ham_metin: g.ham_metin,
       created_at: g.created_at,
       ses_dosyasi: g.ses_dosyasi,
+      kaynak: g.kaynak,
+      eposta: g.eposta as GirdiEpostasi | null,
       ayristirma,
       hata,
       onay: varsayilanOnay(ayristirma, baglam),

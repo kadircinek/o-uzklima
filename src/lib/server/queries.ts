@@ -2,6 +2,7 @@ import "server-only";
 import type { CompanyOverviewRow, ContactRow, DealRow, InboxRow, NoteRow, TaskRow } from "../database.types";
 import type { KartBaglami } from "../inbox";
 import type { ServerClient } from "../supabase/server";
+import type { Db } from "./ops";
 
 // Sayfaların okuma sorguları. Kullanıcı oturumlu istemciyle çalışır; RLS
 // yalnızca kullanıcının kendi satırlarını döndürür.
@@ -137,12 +138,21 @@ export async function sayilar(db: ServerClient, bugun: string): Promise<{ gelen:
   return { gelen: gelen.count ?? 0, geciken: geciken.count ?? 0 };
 }
 
-/** Onay kartındaki firma/kişi/fırsat seçimleri ve Claude'a gönderilen firma dizini. */
-export async function kartBaglami(db: ServerClient): Promise<KartBaglami> {
+/**
+ * Onay kartındaki firma/kişi/fırsat seçimleri ve Claude'a gönderilen firma
+ * dizini. E-posta işlerken yönetici istemcisiyle de çağrıldığı için
+ * user_id ile açıkça filtrelenir.
+ */
+export async function kartBaglami(db: Db, userId: string): Promise<KartBaglami> {
   const [firmalar, kisiler, firsatlar] = await Promise.all([
-    db.from("companies").select("id, ad, tur").order("ad").limit(5000),
-    db.from("contacts").select("id, ad, company_id").limit(10000),
-    db.from("deals").select("id, company_id, urun, asama").not("asama", "in", "(siparis,kaybedildi)").limit(2000),
+    db.from("companies").select("id, ad, tur, eposta_alanlari").eq("user_id", userId).order("ad").limit(5000),
+    db.from("contacts").select("id, ad, company_id, eposta").eq("user_id", userId).limit(10000),
+    db
+      .from("deals")
+      .select("id, company_id, urun, asama")
+      .eq("user_id", userId)
+      .not("asama", "in", "(siparis,kaybedildi)")
+      .limit(2000),
   ]);
   hata(firmalar.error, "Firmalar okunamadı");
   hata(kisiler.error, "Kişiler okunamadı");

@@ -35,6 +35,13 @@ export function cevap(girdi, bugun, toplanti) {
       ],
     };
   }
+  // E-posta ile gelenler: firma bilinçli olarak boş bırakılır; uygulama gönderen
+  // adresinin alan adından firmayı bulmalı.
+  if (girdi.includes("[Gönderilen e-posta]")) return { ...t, tur: "not", baslik: "Gönderilen e-posta", guven: 0.8 };
+  if (girdi.includes("[E-posta]")) {
+    const lucon = /lucon/i.test(girdi);
+    return { ...t, baslik: lucon ? "Lucon için teklif hazırla" : "E-postayı yanıtla", urun: lucon ? "Lucon" : null, guven: 0.85 };
+  }
   if (/teklifi gitti/i.test(girdi)) return { ...t, tur: "takip", olay: "teklif_gonderildi", baslik: "Lucon teklifine dönüş geldi mi?", firma: "ACME plastik", urun: "Lucon" };
   if (/numunesi kargolandı/i.test(girdi)) return { ...t, tur: "takip", olay: "numune_gonderildi", baslik: "Vistamaxx numunesi için geri bildirim iste", firma: "Yıldız Ambalaj", urun: "Vistamaxx" };
   if (/perşembe fiyat/i.test(girdi)) return { ...t, baslik: "Ali'ye fiyat dön", kisi: "Ali", tarih: sonrakiHaftaGunu(bugun, 4) };
