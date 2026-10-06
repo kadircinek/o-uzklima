@@ -38,8 +38,8 @@ export function FirsatPanosu({
 
   return (
     <>
-      {/* Telefon: aşamalar alt alta, boş aşamalar tek satırda */}
-      <div className="space-y-5 md:hidden">
+      {/* Telefon ve dikey iPad: aşamalar alt alta, boş aşamalar tek satırda */}
+      <div className="space-y-5 lg:hidden">
         <div className="flex flex-wrap gap-1.5">
           {sutunlar.map((a) => (
             <Rozet key={a} tur={asamadakiler(a).length ? "vurgu" : "notr"}>
@@ -64,13 +64,13 @@ export function FirsatPanosu({
           ))}
       </div>
 
-      {/* Masaüstü: aşama panosu */}
-      <div className="-mx-8 hidden overflow-x-auto px-8 pb-2 md:block">
+      {/* Yatay iPad ve masaüstü: tüm aşamalar yan yana sığan pano */}
+      <div className="hidden pb-2 lg:block">
         <div className="flex gap-3">
           {sutunlar.map((a) => {
             const liste = asamadakiler(a);
             return (
-              <section key={a} className="w-60 shrink-0 rounded-xl bg-soft p-2 xl:w-auto xl:min-w-0 xl:flex-1">
+              <section key={a} className="min-w-0 flex-1 rounded-xl bg-soft p-2">
                 <h2 className="flex items-center justify-between px-1.5 pb-2 text-sm font-semibold">
                   {ASAMA_ETIKET[a]}
                   <span className="text-xs font-normal text-muted">{ozet(liste)}</span>
@@ -113,7 +113,7 @@ function FirsatKarti({ firsat: f, bugun, ayarlar }: { firsat: FirsatSatiri; bugu
   }
 
   return (
-    <li className={cx("rounded-lg border border-line bg-card p-2.5 shadow-sm", bekliyor && "opacity-60")}>
+    <li className={cx("@container rounded-lg border border-line bg-card p-2.5 shadow-sm", bekliyor && "opacity-60")}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium">{f.urun}</p>
@@ -143,7 +143,8 @@ function FirsatKarti({ firsat: f, bugun, ayarlar }: { firsat: FirsatSatiri; bugu
           <span className="text-muted">{gorev.baslik}</span>
         </p>
       )}
-      <div className="mt-2 flex items-center gap-1.5">
+      {/* Dar sütunlarda seçici ve düğme alt alta */}
+      <div className="mt-2 flex flex-col gap-1.5 @[15rem]:flex-row @[15rem]:items-center">
         <Secici
           value={f.asama}
           disabled={bekliyor}

@@ -30,8 +30,19 @@ let durumKodu = 201;
 let sunucu: https.Server;
 let userId: string;
 
-const tick = async () =>
-  (await fetch(UYGULAMA + "/api/cron/tick", { method: "POST", headers: { Authorization: `Bearer ${CRON_SECRET}` } })).json();
+const tick = async () => {
+  const y = await fetch(UYGULAMA + "/api/cron/tick", { method: "POST", headers: { Authorization: `Bearer ${CRON_SECRET}` } });
+  expect(y.status).toBe(200);
+  await bekle(300);
+};
+/**
+ * Test kullanıcısına giden bildirim kayıtları. Cron yanıtı veritabanındaki tüm
+ * kullanıcıların toplamını verdiği için yalnızca bu kullanıcının kayıtlarına bakılır.
+ */
+async function gunluk() {
+  const { data } = await db.from("notification_log").select("tur, task_id").eq("user_id", userId);
+  return { ozet: data!.filter((l) => l.tur === "ozet").length, hatirlatma: data!.filter((l) => l.tur === "hatirlatma") };
+}
 const bekle = (ms: number) => new Promise((c) => setTimeout(c, ms));
 const imza = (gorev: string) => createHmac("sha256", `lifeos-push-aksiyon:${CRON_SECRET}`).update(`${userId}:${gorev}`).digest("base64url");
 const aksiyon = (govde: object) =>
@@ -91,9 +102,11 @@ describe("hatırlatma motoru", () => {
     await gorevEkle("Bugünkü iş", { vade: BUGUN });
 
     const ozetBekleniyor = ozetZamaniMi(new Date(), ayarlariTamamla(null), false);
-    const r = await tick();
-    expect(r).toMatchObject({ ozet: ozetBekleniyor ? 1 : 0, hatirlatma: 1 });
-    await bekle(300);
+    await tick();
+    const g = await gunluk();
+    expect(g.ozet).toBe(ozetBekleniyor ? 1 : 0);
+    expect(g.hatirlatma.map((l) => l.task_id)).toEqual([odeme]);
+    expect(gelenler.filter((x) => x.yuk.etiket === "ozet")).toHaveLength(ozetBekleniyor ? 1 : 0);
 
     if (ozetBekleniyor) {
       const ozet = gelenler.find((g) => g.yuk.etiket === "ozet")!;
@@ -111,7 +124,12 @@ describe("hatırlatma motoru", () => {
   });
 
   it("aynı gün ikinci çağrıda özet tekrar gitmez", async () => {
-    expect(await tick()).toMatchObject({ ozet: 0, hatirlatma: 0 });
+    const once = gelenler.length;
+    await tick();
+    const g = await gunluk();
+    expect(g.ozet).toBeLessThanOrEqual(1);
+    expect(g.hatirlatma).toHaveLength(1);
+    expect(gelenler).toHaveLength(once);
   });
 
   it("günde en fazla 6 hatırlatma; fazlası özete kalır, en eskiler önce gider", async () => {
@@ -119,7 +137,8 @@ describe("hatırlatma motoru", () => {
     for (let i = 0; i < 8; i++) {
       idler.push(await gorevEkle(`Sınır ${i}`, { vade: BUGUN, hatirlatma_zamani: new Date(Date.now() - (10 - i) * 60_000).toISOString() }));
     }
-    expect(await tick()).toMatchObject({ hatirlatma: 5, ozete: 3 });
+    await tick();
+    expect((await gunluk()).hatirlatma).toHaveLength(6);
     const { data: kalan } = await db.from("tasks").select("id").in("id", idler).not("hatirlatma_zamani", "is", null);
     expect(kalan).toEqual([]);
     const { data: log } = await db.from("notification_log").select("task_id").eq("user_id", userId).eq("tur", "hatirlatma");
