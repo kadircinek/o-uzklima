@@ -54,6 +54,10 @@ npm install
 npm run demo       # http://localhost:3000 · giriş: demo@lifeos.test / demo-sifre-123
 ```
 
+Mac'te terminal kullanmadan: klasördeki **LifeOS Demo.command** dosyasına çift tıklayın. Eksikse Node.js ve Docker
+Desktop'ın indirme sayfasını açar; hazırsa demo'yu başlatır ve uygulamayı iPad Pro simülatöründe (Xcode yoksa
+tarayıcıdaki iPad Pro görünümünde) açar. macOS ilk açılışta "doğrulanamadı" derse dosyaya sağ tıklayıp **Aç**'ı seçin.
+
 Demo yerel bir Supabase başlatır ve Claude'u taklit eder: bilinen örnek cümleler ("Ege Film'e Vistamaxx numunesi
 kargolandı", "Basechem'den TDS bekliyorum"…) ayrıştırılır, diğerleri olduğu gibi görev olur. Gerçek Claude ile denemek
 için `ANTHROPIC_API_KEY=sk-ant-... npm run demo`. Gerçek Supabase projenize dokunmaz; `Ctrl+C` ile kapanır, yerel
