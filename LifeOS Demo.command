@@ -1,7 +1,8 @@
 #!/bin/bash
 # Mac'te çift tıklayınca LifeOS'u örnek verilerle açar (npm run demo).
 # İlk seferde Node.js (nodejs.org) ve Docker Desktop kurulu olmalı.
-# macOS "doğrulanamadı" derse: dosyaya sağ tıklayın → Aç → Aç.
+# macOS "doğrulayamadı" deyip açmazsa: Sistem Ayarları → Gizlilik ve Güvenlik →
+# Yine de Aç; ya da Terminal'de: bash ~/Desktop/Lifeos/"LifeOS Demo.command"
 
 cd "$(dirname "$0")" || exit 1
 dur() {
