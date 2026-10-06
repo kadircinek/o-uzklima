@@ -49,3 +49,6 @@ supabase/.temp
 
 # uçtan uca test çıktıları
 e2e/.cikti/
+
+# yerel demo ve uçtan uca test çıktıları
+/.demo/

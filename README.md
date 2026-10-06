@@ -44,6 +44,38 @@ kayar. Sonraki yılların bayramlarını veya köprü günlerini Ayarlar → Ek 
 Bir firmanın **son teması**; firmaya not eklendiğinde, firmaya bağlı bir görev bittiğinde veya teklif/numune
 gönderimi girildiğinde otomatik ilerler.
 
+## Hemen dene: demo ve iPad Pro simülatörü
+
+Hesap veya anahtar gerekmeden, örnek verilerle (Acme, Delta Polimer, Ege Film… firmaları, görevler, fırsatlar ve
+e-postayla gelmiş bir kayıt) yerelde açmak için Docker ve Node yeter:
+
+```bash
+npm install
+npm run demo       # http://localhost:3000 · giriş: demo@lifeos.test / demo-sifre-123
+```
+
+Demo yerel bir Supabase başlatır ve Claude'u taklit eder: bilinen örnek cümleler ("Ege Film'e Vistamaxx numunesi
+kargolandı", "Basechem'den TDS bekliyorum"…) ayrıştırılır, diğerleri olduğu gibi görev olur. Gerçek Claude ile denemek
+için `ANTHROPIC_API_KEY=sk-ant-... npm run demo`. Gerçek Supabase projenize dokunmaz; `Ctrl+C` ile kapanır, yerel
+Supabase `npx supabase stop` ile durur.
+
+**iPad Pro görünümü (her tarayıcıda):** `/simulator` sayfası uygulamayı iPad Pro 11 veya 13 inç ekran ölçülerinde,
+ana ekrana eklenmiş uygulama gibi bir çerçevede açar. **Döndür** (ya da **R** tuşu) dikey/yatay geçer; gezdiğiniz sayfa
+adreste kalır. Demo'da `http://localhost:3000/simulator`, yayında `https://<uygulama-adresi>/simulator`.
+
+**Gerçek iPad simülatörü (Mac + Xcode):** Uygulama çalışırken ikinci bir terminalde
+
+```bash
+npm run ipad                                  # iPad Pro 13 inç, http://localhost:3000
+npm run ipad -- --11                          # iPad Pro 11 inç
+npm run ipad -- https://<uygulama-adresi>     # yayındaki uygulama
+```
+
+Komut Xcode'daki en yeni iPad Pro simülatörünü başlatır ve uygulamayı Safari'de açar. Safari'de Paylaş → **Ana Ekrana
+Ekle** ile uygulama gibi açılır; Simulator'da ⌘← / ⌘→ döndürür. Xcode yoksa App Store'dan kurup bir kez açın ve
+**Settings → Components**'tan iOS simülatörünü indirin. Gerçek iPad'de denemek için yayındaki adresi Safari'de açmak
+yeter.
+
 ## Kurulum
 
 ### 1. Supabase
@@ -139,6 +171,7 @@ paylaşmak değildir. Claude API kullanımı tek anahtar üzerinden faturalanır
 ```
 src/
   app/                 Sayfalar (Bugün, Gelen kutusu, Görevler, Firmalar, Fırsatlar, Ayarlar)
+    simulator/         Tarayıcıda iPad Pro çerçevesi (oturumsuz açılır, veri içermez)
     actions/           Server action'lar (her biri oturum + zod doğrulaması yapar)
     api/cron/tick      Hatırlatma motoru (CRON_SECRET ile)
     api/push/action    Bildirimdeki Bitti/Ertele (imzalı, oturumsuz)
@@ -150,12 +183,16 @@ src/
     engine.ts              Özet, günlük sınır, sessiz müşteri, bildirim metinleri
     inbox.ts match.ts      Onay kartı modeli, firma/kişi eşleştirme
     eposta.ts              İletilen e-postayı ayırma, BCC tanıma, alan adıyla firma eşleştirme
+    simulator.ts           iPad Pro ölçüleri, ekrana sığdırma, çerçeve yolu denetimi
     parse/                 Claude istemi ve sabit JSON şeması
     server/                Claude çağrısı, iş kuralları (ops), cron (tick), push, e-posta, ekip, sorgular
 supabase/
   migrations/          Şema + RLS + tetikleyiciler, depolama
   cron.sql             pg_cron + pg_net zamanlaması
 public/sw.js           Service worker (push, bildirim düğmeleri)
+scripts/
+  demo.sh demo-verisi.mjs  Tek komutla örnek verili yerel demo
+  ipad-simulator.mjs       Mac'te Xcode iPad Pro simülatörünü açar
 ```
 
 **Claude ayrıştırma.** `src/lib/server/claude.ts` her girdi için `claude-opus-5-5` modeline yapılandırılmış çıktı
@@ -188,7 +225,7 @@ PGURL=postgresql://postgres@localhost:5432/postgres bash supabase/tests/calistir
 push servisini taklit eden sunucularla PRD senaryolarının tamamını tarayıcıda dener: giriş, içe aktarma, her kural için
 hızlı giriş, gelen kutusu, tekrar ve erteleme, aşama değişimi, son temas, özet ve günlük sınır, şifreli Web Push,
 bildirimden Bitti/Ertele, sesli not kaydı, Postmark biçiminde iletilen/BCC e-postalar, ekip hesabı açma ve ilk girişte
-şifre belirleme. Gerçek projenize veya Claude API'ye dokunmaz. İlk çalıştırmadan önce bir kez
+şifre belirleme, iPad Pro simülatörü. Gerçek projenize veya Claude API'ye dokunmaz. İlk çalıştırmadan önce bir kez
 `npx playwright install chromium` gerekir.
 
 ## Kapsam dışı / sonraki adımlar

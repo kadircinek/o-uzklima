@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // Asıl yetki denetimi sayfalarda/aksiyonlarda requireUser() ve veritabanında
 // RLS ile yapılır; burası yalnızca iyimser bir kontroldür.
 
-const ACIK_YOLLAR = ["/giris", "/kurulum", "/api/cron", "/api/push/action", "/api/eposta/gelen"];
+const ACIK_YOLLAR = ["/giris", "/kurulum", "/api/cron", "/api/push/action", "/api/eposta/gelen", "/simulator"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
